@@ -91,9 +91,9 @@ def data_write(fp_data, px_values):
 def main():
     # it s a main function
     a = time.time()
-    fp = "test_data.png"
-    fp_data = "test_data.txt"
     fp_raw = "bw_germany_map.png"
+    fp = "test_data.png"
+    fp_data = "test_data.txt"    
     bw_converter(fp, fp_raw)
     bw_test(fp)
     px_values = extract_px_values(fp)
