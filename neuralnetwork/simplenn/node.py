@@ -17,3 +17,6 @@ class Node(object):
 
     def add_weight(self, w):
         self.weight.append(w)
+    
+    def node_str(self):
+        print(self.weight, self.bias, self.name)
