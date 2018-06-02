@@ -14,6 +14,9 @@ class Network():
     input_vector = 0
     output_vector = 0
     target_output = 0
+    training_data_count = 0
+    cost_function_sum = 0
+    nn_cost_function = 0
 
     # number of layers should be cardinality of conf_list
     # number of nodes per layer should be second value of said tuple
@@ -103,6 +106,20 @@ class Network():
             real_nr = real_nr * int_nr
             return real_nr
 
+    def cost_function(self):
+        self.training_data_count += 1
+        # sub_to target and real outp
+        sub_to = np.subtract(self.target_output, self.output_vector)
+        temp = np.linalg.norm(sub_to)
+        temp = np.square(temp)
+        temp = temp * (1 / 2)
+        self.cost_function_sum = self.cost_function_sum + temp
+
+    def nn_cost(self):
+        self.nn_cost_function = (
+            1 / self.training_data_count) * self.cost_function_sum
+        return (self.nn_cost_function)
+
     def propagate_forward(self):
         a = self.weights_matrices[0].dot(self.input_vector)
         a = a + self.bias_matrices[0]
@@ -129,7 +146,6 @@ class Network():
             for i in range(len(target_output)):
                 self.target_vector.itemset(i, target_output[i])
             print("Target Vector:\n", self.target_vector)
-            
 
     def apply_input(self, inp):
         # interpreting the n dim input tuple

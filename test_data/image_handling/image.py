@@ -84,7 +84,7 @@ def data_write(fp_data, px_values):
         f.write("k: Category "+"c: Color"+"\n")
         f.write("m "+"n "+"k "+"c"+"\n")
         for i in px_values:
-            f.write(str(i[0]) + " " + str(i[1]) + " " + str(i[2]) + " " + str(i[3]) + " " + "\n")
+            f.write(str(i[0]) + "_" + str(i[1]) + "_" + str(i[2]) + "_" + str(i[3]) + "_" + ";")
     print("Finished", f.closed)
 
     
