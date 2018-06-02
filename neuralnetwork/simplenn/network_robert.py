@@ -13,7 +13,7 @@ class Network():
     input_size = 0
     input_vector = 0
     output_vector = 0
-    desired
+    target_output = 0
 
     # number of layers should be cardinality of conf_list
     # number of nodes per layer should be second value of said tuple
@@ -113,7 +113,23 @@ class Network():
             a = self.weights_matrices[i].dot(a)
             a = a + self.bias_matrices[i]
             a = self.vector_activator(a)
-        print("Layer", self.layers_count - 1,"Output:\n", a)
+        print("Layer", self.layers_count - 1, "Output:\n", a)
+        self.output_vector = a
+
+    def target_vector_constructor(self, target_output):
+        m = len(target_output)
+        last_layer_mat_index = len(self.weights_matrices) - 1
+        output_dim = self.weights_matrices[last_layer_mat_index].shape[0]
+        if (m != output_dim):
+            print("Target vector dimension wrong. Error!")
+            sys.exit()
+        else:
+            self.target_vector = np.array(0, np.float16)
+            self.target_vector.resize((m, 1))
+            for i in range(len(target_output)):
+                self.target_vector.itemset(i, target_output[i])
+            print("Target Vector:\n", self.target_vector)
+            
 
     def apply_input(self, inp):
         # interpreting the n dim input tuple

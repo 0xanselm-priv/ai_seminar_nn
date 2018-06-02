@@ -36,6 +36,7 @@ def main():
     nn_conf_2x2 = [(1,2),(2,3),(3,6),(4,5),(5,2)]
     a = network_robert.Network(nn_conf_2x2 , "sigmoid")
     a.apply_input((5,35))
+    a.target_vector_constructor((1,0))
 
 if __name__ == "__main__":
     main()
