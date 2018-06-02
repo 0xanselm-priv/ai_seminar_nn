@@ -85,7 +85,7 @@ class Network():
     def vector_activator(self, matrix):
         if self.activation_func == "sigmoid":
             for m in range(matrix.shape[0]):
-                a = matrix.item((m, 0))
+                a = matrix.item((m, 0)) # <------ produces error, replace with numpy
                 a = (1 / (1 + math.exp(-a)))
                 matrix.itemset((m, 0), a)
         elif self.activation_func == "relu":
