@@ -16,7 +16,7 @@ celebrate
 
 Please note, that in the console printed version the weight and bias
 values are rounded by default. Internally they are stored as 16bit float.
-we can certainly expand to 32 or 64 bit.
+we can certainly expand to 32 or 64 bit or even 128.
 """
 
 import numpy as np
