@@ -32,9 +32,10 @@ def main():
 #         node.Node(0, 0), node.Node(5, 1), node.Node(4, 2)]])
 #     first_Network.create_network()
 #     first_network.create_network_randomly()
-    nn_conf = [(1,4),(2,3),(3,4),(4,5),(5,2)]
-    a = network_robert.Network(nn_conf, "relu")
-    a.apply_input((1,2,3,4))
+#     nn_conf = [(1,4),(2,3),(3,4),(4,5),(5,2)] # Paper NN config
+    nn_conf_2x2 = [(1,2),(2,3),(3,6),(4,5),(5,2)]
+    a = network_robert.Network(nn_conf_2x2 , "sigmoid")
+    a.apply_input((5,35))
 
 if __name__ == "__main__":
     main()

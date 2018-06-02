@@ -8,13 +8,17 @@ class Network():
     weights_matrices = []
     bias_matrices = []
     conf_list = 0
+    layers_count = 0
     activation_funct = 0
     input_size = 0
     input_vector = 0
+    output_vector = 0
+    desired
+
     # number of layers should be cardinality of conf_list
     # number of nodes per layer should be second value of said tuple
 
-    def __init__(self, conf_list, activation_function):
+    def __init__(self, conf_list, activation_function, number_format=np.float16):
         if len(conf_list) < 2:
             print("Wrong Config. Check params")
             sys.exit()
@@ -24,18 +28,19 @@ class Network():
             for i in range(len(conf_list) - 1):
                 m = conf_list[i + 1][1]
                 n = conf_list[i][1]
-                a = np.array(0, np.float16)
+                a = np.array(0, number_format)
                 a.resize((m, n))
                 self.weights_matrices.append(a)
             for i in range(1, len(conf_list)):
                 n = conf_list[i][1]
-                a = np.array(0, np.float16)
+                a = np.array(0, number_format)
                 a.resize((n, 1))
                 self.bias_matrices.append(a)
         # self.bias_matrices[1].item(1, 0))
         # setting only possible input size dim
         self.input_size = self.weights_matrices[0].shape[1]
         self.nn_setup_rand()
+        self.layers_count = len(self.weights_matrices) + 1
         self.nn_information()
 
     def nn_setup_rand(self):
@@ -63,7 +68,6 @@ class Network():
             print(bias_str, self.bias_matrices[i])
         print("Activation Function used:", self.activation_func)
         print("Input Size:", self.input_size)
-        print("Input Vector:\n", self.input_vector)
 
     def get_activation(self, x):
         if self.activation_func == "sigmoid":
@@ -74,6 +78,22 @@ class Network():
             print("Error.Wrong Activation")
             sys.exit()
 
+    def vector_activator(self, matrix):
+        if self.activation_func == "sigmoid":
+            for m in range(matrix.shape[0]):
+                a = matrix.item((m, 0))
+                a = (1 / (1 + math.exp(-a)))
+                matrix.itemset((m, 0), a)
+        elif self.activation_func == "relu":
+            for m in range(matrix.shape[0]):
+                a = matrix.item((m, 0))
+                a = np.maximum(m, 0)
+                matrix.itemset((m, 0), a)
+        else:
+            print("Error.Wrong Activation")
+            sys.exit()
+        return matrix
+
     def set_initial_randoms(self, a, b):
         # a and b for lower and upper bound of rand numbers
         for i in range(10):
@@ -81,15 +101,26 @@ class Network():
             real_nr = random.random() + 1
             int_nr = random.randint(a, b)
             real_nr = real_nr * int_nr
-            real_nr = round(real_nr, 3)
             return real_nr
+
+    def propagate_forward(self):
+        a = self.weights_matrices[0].dot(self.input_vector)
+        a = a + self.bias_matrices[0]
+        a = self.vector_activator(a)
+        for i in range(1, self.layers_count - 1):
+            print("Layer", i)
+            print(a)
+            a = self.weights_matrices[i].dot(a)
+            a = a + self.bias_matrices[i]
+            a = self.vector_activator(a)
+        print("Layer", self.layers_count - 1,"Output:\n", a)
 
     def apply_input(self, inp):
         # interpreting the n dim input tuple
         # and integrate it into a np data structure
         m = len(inp)
         if (m != self.input_size):
-            print("Input vector size wrong. Error!")
+            print("Input vector dimension wrong. Error!")
             sys.exit()
         else:
             self.input_vector = np.array(0, np.float16)
@@ -97,3 +128,5 @@ class Network():
             for i in range(len(inp)):
                 self.input_vector.itemset(i, inp[i])
             print("Input Vector\n", self.input_vector)
+        # start propagating forward
+        self.propagate_forward()
