@@ -62,8 +62,8 @@ class Network():
             print(layer_str, self.weights_matrices[i])
             print(bias_str, self.bias_matrices[i])
         print("Activation Function used:", self.activation_func)
-
         print("Input Size:", self.input_size)
+        print("Input Vector:\n", self.input_vector)
 
     def get_activation(self, x):
         if self.activation_func == "sigmoid":
@@ -87,5 +87,13 @@ class Network():
     def apply_input(self, inp):
         # interpreting the n dim input tuple
         # and integrate it into a np data structure
-        
-        self.input_vector = ip
+        m = len(inp)
+        if (m != self.input_size):
+            print("Input vector size wrong. Error!")
+            sys.exit()
+        else:
+            self.input_vector = np.array(0, np.float16)
+            self.input_vector.resize((m, 1))
+            for i in range(len(inp)):
+                self.input_vector.itemset(i, inp[i])
+            print("Input Vector\n", self.input_vector)

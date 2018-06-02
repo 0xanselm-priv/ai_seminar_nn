@@ -34,6 +34,7 @@ def main():
 #     first_network.create_network_randomly()
     nn_conf = [(1,4),(2,3),(3,4),(4,5),(5,2)]
     a = network_robert.Network(nn_conf, "relu")
+    a.apply_input((1,2,3,4))
 
 if __name__ == "__main__":
     main()
