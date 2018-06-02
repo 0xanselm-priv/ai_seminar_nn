@@ -7,8 +7,6 @@ import numpy as np
 import math
 import random
 import sys
-# Eclipse style imports. Inform me if this
-# this bothers your IDE
 import simplenn
 from simplenn import network
 from simplenn import node
@@ -21,11 +19,6 @@ __credits__ = "If you would like to thank somebody \
 __email__ = "niels.heissel@stud.uni-frankfurt.de"
 
 
-#
-# a = np.mat('2; 3; 4; 5')
-#
-# print(a)
-
 class Main():
     input_vector_list = []
     target_vector_list = []
@@ -35,24 +28,30 @@ class Main():
         self.main()
 
     def main(self):
-        #     first_network = network.Network([[node.Node(1, 0), node.Node(2, 1)], [node.Node(0, 0)], [
-        #         node.Node(0, 0), node.Node(5, 1), node.Node(4, 2)]])
-        #     first_Network.create_network()
-        #     first_network.create_network_randomly()
-        #     nn_conf = [(1,4),(2,3),(3,4),(4,5),(5,2)] # Paper NN config
-        #     control errything from here
+#         first_network = network.Network([[node.Node(1, 0), node.Node(2, 1)], [node.Node(0, 0)], [
+#             node.Node(0, 0), node.Node(5, 1), node.Node(4, 2)]])
+#         first_Network.create_network()
+#         first_network.create_network_randomly()
+#         nn_conf = [(1,4),(2,3),(3,4),(4,5),(5,2)] # Paper NN config
+#         control errything from here
 
         self.data_fetch()
         self.construct_input_vector()
         self.construct_target_vector_list()
+#         theese tuples are the structure of the network
+#         each tuple represents a layer
+#         the first entry is the layer number, starting with 1
+#         because layer 0 is the input layer
+#         and the second number describes the number of nodes/neurons
+#         if you want to adjust the network just build a new tuple collection
         nn_conf_2x2 = [(1, 2), (2, 3), (3, 6), (4, 5), (5, 2)]
         a = network_robert.Network(nn_conf_2x2, "sigmoid")
         j = 0
         for i in self.input_vector_list:
-            a.apply_input(i)            
+            a.apply_input(i)
             a.target_vector_constructor(self.target_vector_list[j])
             a.cost_function()
-            j+= 1
+            j += 1
         print(a.nn_cost())
 
     def data_fetch(self):
