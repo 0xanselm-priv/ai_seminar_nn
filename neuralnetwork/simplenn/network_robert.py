@@ -86,7 +86,7 @@ class Network():
         if self.activation_func == "sigmoid":
             for m in range(matrix.shape[0]):
                 a = matrix.item((m, 0)) 
-                a = (1 / (1 + numpy.exp(-a))) # <------ produces error, replace with numpy
+                a = (1 / (1 + np.exp(-a))) # <------ produces error, replace with numpy
                 matrix.itemset((m, 0), a)
         elif self.activation_func == "relu":
             for m in range(matrix.shape[0]):
