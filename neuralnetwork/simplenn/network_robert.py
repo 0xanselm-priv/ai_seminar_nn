@@ -58,6 +58,7 @@ class Network():
                 vector.itemset((m, 0), self.set_initial_randoms(-5, 5))
 
     def nn_information(self):
+        # Printing useful network information
         count_layers = len(self.conf_list)
         nn_str = "A CNN with " + str(count_layers) + " layers."
         print(nn_str)
