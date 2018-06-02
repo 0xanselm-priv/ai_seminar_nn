@@ -6,7 +6,7 @@ These will be used to create the neural network later on.
 import numpy as np
 import math
 
-__author__ = "6770541: Niels Heissel, 6785468: Robert am Wege"
+__author__ = "Niels #1, Niels #2"
 __copyright__ = "Copyright 2017/2018 – EPR-Goethe-Uni"
 __credits__ = "If you would like to thank somebody \
               i.e. an other student for her code or leave it out"
@@ -66,6 +66,6 @@ class Network(object):
 
 
 
-First_Network = Network([[Node(1, 0), Node(2,1)], [Node(0, 0)], [Node(0,0), Node(5,1), Node(4,2)]])
+first_Network = Network([[Node(1, 0), Node(2,1)], [Node(0, 0)], [Node(0,0), Node(5,1), Node(4,2)]])
 
-First_Network.create_network()
+first_Network.create_network()
