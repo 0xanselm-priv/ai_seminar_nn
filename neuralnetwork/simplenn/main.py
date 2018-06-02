@@ -1,6 +1,22 @@
 """Data-Types: This file contains the code for the new data-types.
-
 These will be used to create the neural network later on.
+
+How to:
+In the main function, first, the data from test_data.txt is retrived,
+and the input as well as the output is put into np ndarray form
+Afterwards you can construct a nn using the explanation provided.
+with network_robert a constructor is called which builds the nn.
+In the following for loop the input data is put in and that output is 
+compared to the target output. at the end the overall costs of this nn is shown.
+ 
+to do:
+apply sgd
+apply backprob
+celebrate
+
+Please note, that in the console printed version the weight and bias
+values are rounded by default. Internally they are stored as 16bit float.
+we can certainly expand to 32 or 64 bit.
 """
 
 import numpy as np
@@ -28,12 +44,12 @@ class Main():
         self.main()
 
     def main(self):
-#         first_network = network.Network([[node.Node(1, 0), node.Node(2, 1)], [node.Node(0, 0)], [
-#             node.Node(0, 0), node.Node(5, 1), node.Node(4, 2)]])
-#         first_Network.create_network()
-#         first_network.create_network_randomly()
-#         nn_conf = [(1,4),(2,3),(3,4),(4,5),(5,2)] # Paper NN config
-#         control errything from here
+        #         first_network = network.Network([[node.Node(1, 0), node.Node(2, 1)], [node.Node(0, 0)], [
+        #             node.Node(0, 0), node.Node(5, 1), node.Node(4, 2)]])
+        #         first_Network.create_network()
+        #         first_network.create_network_randomly()
+        #         nn_conf = [(1,4),(2,3),(3,4),(4,5),(5,2)] # Paper NN config
+        #         control errything from here
 
         self.data_fetch()
         self.construct_input_vector()
@@ -45,14 +61,15 @@ class Main():
 #         and the second number describes the number of nodes/neurons
 #         if you want to adjust the network just build a new tuple collection
         nn_conf_2x2 = [(1, 2), (2, 3), (3, 6), (4, 5), (5, 2)]
+        # <----- could run with "relu". buggy rn
         a = network_robert.Network(nn_conf_2x2, "sigmoid")
         j = 0
-        for i in self.input_vector_list:
-            a.apply_input(i)
-            a.target_vector_constructor(self.target_vector_list[j])
-            a.cost_function()
-            j += 1
-        print(a.nn_cost())
+#         for i in self.input_vector_list:
+#             a.apply_input(i)
+#             a.target_vector_constructor(self.target_vector_list[j])
+#             a.cost_function()
+#             j += 1
+#         print(a.nn_cost())
 
     def data_fetch(self):
         fp_data = "test_data.txt"

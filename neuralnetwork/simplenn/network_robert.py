@@ -18,12 +18,12 @@ class Network():
     cost_function_sum = 0
     nn_cost_function = 0
 
-    # number of layers should be cardinality of conf_list
+    # number of layers should be cardinality of conf_list + 1
     # number of nodes per layer should be second value of said tuple
 
     def __init__(self, conf_list, activation_function, number_format=np.float16):
         if len(conf_list) < 2:
-            print("Wrong Config. Check params")
+            print("Wrong or impossible Config. Check params")
             sys.exit()
         else:
             self.conf_list = conf_list
@@ -39,7 +39,6 @@ class Network():
                 a = np.array(0, number_format)
                 a.resize((n, 1))
                 self.bias_matrices.append(a)
-        # self.bias_matrices[1].item(1, 0))
         # setting only possible input size dim
         self.input_size = self.weights_matrices[0].shape[1]
         self.nn_setup_rand()
@@ -71,9 +70,10 @@ class Network():
             print(layer_str, self.weights_matrices[i])
             print(bias_str, self.bias_matrices[i])
         print("Activation Function used:", self.activation_func)
-        print("Input Size:", self.input_size)
+        print("Input Size:", self.input_size, "x 1")
 
     def get_activation(self, x):
+        # obsolete idiot function. maybe dont delete yet
         if self.activation_func == "sigmoid":
             return (1 / (1 + math.exp(-x)))
         elif self.activation_func == "relu":
@@ -85,23 +85,23 @@ class Network():
     def vector_activator(self, matrix):
         if self.activation_func == "sigmoid":
             for m in range(matrix.shape[0]):
-                a = matrix.item((m, 0)) 
-                a = (1 / (1 + np.exp(-a))) # <------ produces error, replace with numpy
+                a = matrix.item((m, 0))
+                a = (1 / (1 + np.exp(-a)))  # <------ could produce error
                 matrix.itemset((m, 0), a)
         elif self.activation_func == "relu":
             for m in range(matrix.shape[0]):
                 a = matrix.item((m, 0))
-                a = np.maximum(m, 0) # <------ produces error, lol dunno why tho send nudes
+                a = np.maximum(m, 0)  # <------ produces error, dunno why tho
                 matrix.itemset((m, 0), a)
         else:
-            print("Error.Wrong Activation")
+            print("Error. Wrong Activation")
             sys.exit()
         return matrix
 
     def set_initial_randoms(self, a, b):
         # a and b for lower and upper bound of rand numbers
         for i in range(10):
-            # random.seed(4)
+            #             random.seed(4)
             real_nr = random.random() + 1
             int_nr = random.randint(a, b)
             real_nr = real_nr * int_nr
@@ -115,6 +115,7 @@ class Network():
         temp = np.square(temp)
         temp = temp * (1 / 2)
         self.cost_function_sum = self.cost_function_sum + temp
+        print(self.cost_function_sum)
 
     def nn_cost(self):
         self.nn_cost_function = (
@@ -126,12 +127,12 @@ class Network():
         a = a + self.bias_matrices[0]
         a = self.vector_activator(a)
         for i in range(1, self.layers_count - 1):
-            print("Layer", i)
-            print(a)
+            #             print("Layer", i)
+            #             print(a)
             a = self.weights_matrices[i].dot(a)
             a = a + self.bias_matrices[i]
             a = self.vector_activator(a)
-        print("Layer", self.layers_count - 1, "Output:\n", a)
+#         print("Layer", self.layers_count - 1, "Output:\n", a)
         self.output_vector = a
 
     def target_vector_constructor(self, target_output):
@@ -146,7 +147,7 @@ class Network():
             self.target_vector.resize((m, 1))
             for i in range(len(target_output)):
                 self.target_vector.itemset(i, target_output[i])
-            print("Target Vector:\n", self.target_vector)
+#             print("Target Vector:\n", self.target_vector)
 
     def apply_input(self, inp):
         # interpreting the n dim input tuple
@@ -160,6 +161,6 @@ class Network():
             self.input_vector.resize((m, 1))
             for i in range(len(inp)):
                 self.input_vector.itemset(i, inp[i])
-            print("Input Vector\n", self.input_vector)
+#             print("Input Vector\n", self.input_vector)
         # start propagating forward
         self.propagate_forward()
