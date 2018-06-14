@@ -60,9 +60,11 @@ class Main():
 #         because layer 0 is the input layer
 #         and the second number describes the number of nodes/neurons
 #         if you want to adjust the network just build a new tuple collection
-        nn_conf_2x2 = [(1, 2), (2, 3), (3, 6), (4, 5), (5, 2)]
+        nn_conf_2x2 = [(1, 2), (2, 3), (3, 2)]
         # <----- could run with "relu". buggy rn
         a = network_robert.Network(nn_conf_2x2, "sigmoid")
+
+
         j = 0
 #         for i in self.input_vector_list:
 #             a.apply_input(i)

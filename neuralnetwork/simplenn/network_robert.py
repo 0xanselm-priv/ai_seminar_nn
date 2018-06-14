@@ -8,9 +8,9 @@ class Network():
     weights_matrices = []  # saves all the weight-matrices as list of matrices
     bias_matrices = []  # saves all bias vectors as list of vectors
 
-    # add list of activation vectors  !
+    activation_vectors = []
 
-    conf_list = 0
+    conf_list = 0  # what is this used for?
     layers_count = 0
     activation_funct = 0
     input_size = 0
@@ -44,9 +44,31 @@ class Network():
                 self.bias_matrices.append(a)  # <----- import to use as real matrix (use np.asmatrix(matrix) !!!!
         # setting only possible input size dim
         self.input_size = self.weights_matrices[0].shape[1]
-        self.nn_setup_rand()
+        self.nn_setup()
         self.layers_count = len(self.weights_matrices) + 1
         self.nn_information()
+        b = np.array(0, np.float16)
+        b.resize((2, 1))
+        x1 = 2
+        x2 = 1
+        b.itemset((0, 0), x1)
+        b.itemset((1, 0), x2)
+        self.apply_input(b)
+        self.propagate_forward()
+        print(self.calc_b(3))
+        print(self.calc_w(3))
+
+
+    def nn_setup(self):
+        self.weights_matrices = [np.array([[0.4, 2],[-1.3, 0.1], [0.4, 0.5]]),np.array([[0.6, 0.2, -0.9],[0.4, 1.1, 0.7]])]
+        # for matrix in self.weights_matrices:
+        #     for m in range(matrix.shape[0]):
+        #         for n in range(matrix.shape[1]):
+        #             print(weight[m][n])
+        #             matrix.itemset((m, n), weight[m][n])
+        for vector in self.bias_matrices:
+            for m in range(vector.shape[0]):
+                vector.itemset((m, 0), input("bias" + str(m)))
 
     def nn_setup_rand(self):
         # setting up the network with random real numbers
@@ -126,20 +148,32 @@ class Network():
         return (self.nn_cost_function)
 
     def propagate_forward(self):
-        a = self.weights_matrices[0].dot(self.input_vector)
+        self.activation_vectors = []
+
+        print(self.input_vector)
+
+        self.activation_vectors.append(self.input_vector)
+
+        a = self.weights_matrices[0].dot(self.input_vector)  # is not a dot-product !!!! please use @-operator!!!! ?
         a = a + self.bias_matrices[0]
         a = self.vector_activator(a)  # <---- applies the activation function on vector
+
+        self.activation_vectors.append(a)
+
         for i in range(1, self.layers_count - 1):
             #             print("Layer", i)
             #             print(a)
 
-            # here we should save all the activation vectors so we can use them later
-
-            a = self.weights_matrices[i].dot(a)
+            a = self.weights_matrices[i].dot(a)  # is not a dot-product !!!! please use @-operator!!!! ?
             a = a + self.bias_matrices[i]
             a = self.vector_activator(a)
+
+            self.activation_vectors.append(a)
+
 #         print("Layer", self.layers_count - 1, "Output:\n", a)
         self.output_vector = a
+
+        print(self.activation_vectors)
 
     def target_vector_constructor(self, target_output):
         m = len(target_output)
@@ -170,3 +204,27 @@ class Network():
 #             print("Input Vector\n", self.input_vector)
         # start propagating forward
         self.propagate_forward()
+
+    def delta(self, layer):
+        self.target_vector = np.array([[1],[0]])
+        layer -= 1
+        if layer + 1 == len(self.conf_list):
+            d = self.activation_vectors[layer] * (1 - self.activation_vectors[layer]) * (self.activation_vectors[layer] - self.target_vector)  # <-- * = Hadamar Product
+            return d
+        else:
+            print(self.activation_vectors)
+            return self.activation_vectors[layer] * (1 - self.activation_vectors[layer]) * (self.weights_matrices[layer + 1].transpose @ self.delta(layer + 1))
+
+    def calc_b(self, layer):
+        return self.delta(layer)
+
+    def calc_w(self, layer):
+        print("w-array")
+        w_array = []
+
+        for i in range(1 , len(self.weights_matrices[layer - 2]) + 1):
+            for j in range(1, len(self.weights_matrices[layer - 2][i - 1] + 1)):
+
+                w_array.append([self.delta(layer)[i] * self.activation_vectors[layer - 2][j]])
+
+        return np.array(w_array)
