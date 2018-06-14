@@ -5,8 +5,11 @@ import math
 
 
 class Network():
-    weights_matrices = []
-    bias_matrices = []
+    weights_matrices = []  # saves all the weight-matrices as list of matrices
+    bias_matrices = []  # saves all bias vectors as list of vectors
+
+    # add list of activation vectors  !
+
     conf_list = 0
     layers_count = 0
     activation_funct = 0
@@ -38,7 +41,7 @@ class Network():
                 n = conf_list[i][1]
                 a = np.array(0, number_format)
                 a.resize((n, 1))
-                self.bias_matrices.append(a)
+                self.bias_matrices.append(a)  # <----- import to use as real matrix (use np.asmatrix(matrix) !!!!
         # setting only possible input size dim
         self.input_size = self.weights_matrices[0].shape[1]
         self.nn_setup_rand()
@@ -125,10 +128,13 @@ class Network():
     def propagate_forward(self):
         a = self.weights_matrices[0].dot(self.input_vector)
         a = a + self.bias_matrices[0]
-        a = self.vector_activator(a)
+        a = self.vector_activator(a)  # <---- applies the activation function on vector
         for i in range(1, self.layers_count - 1):
             #             print("Layer", i)
             #             print(a)
+
+            # here we should save all the activation vectors so we can use them later
+
             a = self.weights_matrices[i].dot(a)
             a = a + self.bias_matrices[i]
             a = self.vector_activator(a)

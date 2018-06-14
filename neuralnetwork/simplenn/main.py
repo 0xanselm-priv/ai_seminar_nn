@@ -23,10 +23,10 @@ import numpy as np
 import math
 import random
 import sys
-import simplenn
-from simplenn import network
-from simplenn import node
-from simplenn import network_robert
+#import simplenn
+#from simplenn import network
+#from simplenn import node
+import network_robert
 
 __author__ = "Niels #1, Niels #2"
 __copyright__ = "Copyright 2017/2018 – EPR-Goethe-Uni"
