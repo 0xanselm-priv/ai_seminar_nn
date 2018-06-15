@@ -32,8 +32,7 @@ class Network():
             self.conf_list = conf_list
             self.activation_func = activation_function
 
-            self.itterations = 10
-
+            self.itterations = 500000
 
             for i in range(len(conf_list) - 1):
                 m = conf_list[i + 1][1]
@@ -46,11 +45,13 @@ class Network():
                 a = np.array(0, number_format)
                 a.resize((n, 1))
                 self.bias_matrices.append(a)  # <----- import to use as real matrix (use np.asmatrix(matrix) !!!!
+
         # setting only possible input size dim
         self.input_size = self.weights_matrices[0].shape[1]
-        self.nn_setup()
+        self.nn_setup_rand()
         self.layers_count = len(self.weights_matrices) + 1
         self.nn_information()
+
         b = np.array(0, np.float16)
         b.resize((2, 1))
         x1 = 2
@@ -62,14 +63,14 @@ class Network():
         self.target_output = np.array([[1],[0]])
         self.cost_function()
 
-        print("NOW WE UPDATE WEIGHTS AND BIASES!!!!!_________")
+        #print("NOW WE UPDATE WEIGHTS AND BIASES!!!!!_________")
 
-        for i in range(self.itterations):
+        for i in range(1, self.itterations):
 
-            self.update_b(2, 0.2 * self.cost_function())
-            self.update_b(3, 0.2 * self.cost_function())
-            self.update_w(2, 0.2 * self.cost_function())
-            self.update_w(3, 0.2 * self.cost_function())
+            for layer_num in range(len(self.conf_list) - 1):
+                print(layer_num + 2)
+                self.update_w(layer_num + 2, 0.05)
+                self.update_b(layer_num + 2, 0.05)
 
             self.apply_input(b)
             self.cost_function()
@@ -77,8 +78,8 @@ class Network():
         self.save_outputs()
 
     def nn_setup(self):
-        self.weights_matrices = [np.array([[0.4, 2],[-1.3, 0.1], [0.4, 0.5]]), np.array([[0.6, 0.2, -0.9],[0.4, 1.1, 0.7]])]
-        self.bias_matrices= [np.array([[0],[0.3],[2]]), np.array([[0.5],[0.6]])]
+        self.weights_matrices = [np.array([[0.4, 2],[-1.3, 0.1], [0.4, 0.5]]), np.array([[0.4, 0.3, 0.1], [0.4, 0.3, 0.1], [0.4, 0.3, 0.1], [0.4, 0.3, 0.1], [0.4, 0.3, 0.1]]), np.array([[0.6, 0.2, -0.9, 0.7, 1.4],[0.4, 1.1, 0.7, 1.3, 0.1]])]
+        self.bias_matrices= [np.array([[0],[0.3],[2]]), np.array([[2], [0.3], [0.7], [-1.2], [3]]), np.array([[0.5],[0.6]])]
 
         # for matrix in self.weights_matrices:
         #     for m in range(matrix.shape[0]):
@@ -181,16 +182,13 @@ class Network():
     def propagate_forward(self):
         self.activation_vectors = []
 
-        #print(self.input_vector)
-        print("!!!!")
-
         self.activation_vectors.append(self.input_vector)
 
-        x = 0
-        for i in self.weights_matrices:
-            print(str(x), "\n")
-            print(i)
-            x += 1
+        # x = 0
+        # for i in self.weights_matrices:
+        #     print(str(x), "\n")
+        #     print(i)
+        #     x += 1
 
         a = self.weights_matrices[0].dot(self.input_vector)  # is not a dot-product !!!! please use @-operator!!!! ?
         a = a + self.bias_matrices[0]
@@ -267,8 +265,8 @@ class Network():
                 # calculate the corresponding weight-gradient and write as vector
                 self.weights_matrices[layer - 2][i-1][j-1] -= learning_rate * (self.delta(layer)[i-1] * self.activation_vectors[layer - 2][j-1])
 
-        for matrix in self.weights_matrices:
-            print("Matrix: ", matrix)
+        # for matrix in self.weights_matrices:
+        #     print("Matrix: ", matrix)
 
     def save_outputs(self):
         with open('ergebnisse.txt', 'a') as f:
