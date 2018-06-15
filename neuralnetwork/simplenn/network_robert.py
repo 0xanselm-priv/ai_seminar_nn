@@ -31,6 +31,10 @@ class Network():
         else:
             self.conf_list = conf_list
             self.activation_func = activation_function
+
+            self.itterations = 10
+
+
             for i in range(len(conf_list) - 1):
                 m = conf_list[i + 1][1]
                 n = conf_list[i][1]
@@ -53,22 +57,37 @@ class Network():
         x2 = 1
         b.itemset((0, 0), x1)
         b.itemset((1, 0), x2)
-        self.apply_input(b)
-        self.propagate_forward()
-        print(self.calc_b(3))
-        print(self.calc_w(3))
 
+        self.apply_input(b)  # <---- applies input and propagates forwards
+        self.target_output = np.array([[1],[0]])
+        self.cost_function()
+
+        print("NOW WE UPDATE WEIGHTS AND BIASES!!!!!_________")
+
+        for i in range(self.itterations):
+
+            self.update_b(2, 0.2 * self.cost_function())
+            self.update_b(3, 0.2 * self.cost_function())
+            self.update_w(2, 0.2 * self.cost_function())
+            self.update_w(3, 0.2 * self.cost_function())
+
+            self.apply_input(b)
+            self.cost_function()
+
+        self.save_outputs()
 
     def nn_setup(self):
-        self.weights_matrices = [np.array([[0.4, 2],[-1.3, 0.1], [0.4, 0.5]]),np.array([[0.6, 0.2, -0.9],[0.4, 1.1, 0.7]])]
+        self.weights_matrices = [np.array([[0.4, 2],[-1.3, 0.1], [0.4, 0.5]]), np.array([[0.6, 0.2, -0.9],[0.4, 1.1, 0.7]])]
+        self.bias_matrices= [np.array([[0],[0.3],[2]]), np.array([[0.5],[0.6]])]
+
         # for matrix in self.weights_matrices:
         #     for m in range(matrix.shape[0]):
         #         for n in range(matrix.shape[1]):
         #             print(weight[m][n])
         #             matrix.itemset((m, n), weight[m][n])
-        for vector in self.bias_matrices:
-            for m in range(vector.shape[0]):
-                vector.itemset((m, 0), input("bias" + str(m)))
+        # for vector in self.bias_matrices:
+        #     for m in range(vector.shape[0]):
+        #         vector.itemset((m, 0), input("bias" + str(m)))
 
     def nn_setup_rand(self):
         # setting up the network with random real numbers
@@ -132,15 +151,27 @@ class Network():
             real_nr = real_nr * int_nr
             return real_nr
 
+    # def cost_function(self):
+    #     self.training_data_count += 1
+    #     # sub_to target and real outp
+    #
+    #     print(self.target_output)
+    #     sub_to = np.subtract(self.target_output, self.output_vector)
+    #     temp = np.linalg.norm(sub_to)
+    #     temp = np.square(temp)
+    #     temp = temp * (1 / 2)
+    #     self.cost_function_sum = self.cost_function_sum + temp
+    #
+    #     print(self.cost_function_sum)
+
     def cost_function(self):
-        self.training_data_count += 1
-        # sub_to target and real outp
-        sub_to = np.subtract(self.target_output, self.output_vector)
-        temp = np.linalg.norm(sub_to)
-        temp = np.square(temp)
-        temp = temp * (1 / 2)
-        self.cost_function_sum = self.cost_function_sum + temp
-        print(self.cost_function_sum)
+        print(self.target_output)
+        cost = self.target_output - self.output_vector
+        cost = np.linalg.norm(cost)
+        cost = 1/2 * np.square(cost)
+        print(cost)
+
+        return cost
 
     def nn_cost(self):
         self.nn_cost_function = (
@@ -150,9 +181,16 @@ class Network():
     def propagate_forward(self):
         self.activation_vectors = []
 
-        print(self.input_vector)
+        #print(self.input_vector)
+        print("!!!!")
 
         self.activation_vectors.append(self.input_vector)
+
+        x = 0
+        for i in self.weights_matrices:
+            print(str(x), "\n")
+            print(i)
+            x += 1
 
         a = self.weights_matrices[0].dot(self.input_vector)  # is not a dot-product !!!! please use @-operator!!!! ?
         a = a + self.bias_matrices[0]
@@ -173,7 +211,8 @@ class Network():
 #         print("Layer", self.layers_count - 1, "Output:\n", a)
         self.output_vector = a
 
-        print(self.activation_vectors)
+        print("\n\n")
+        print(self.output_vector)
 
     def target_vector_constructor(self, target_output):
         m = len(target_output)
@@ -206,25 +245,32 @@ class Network():
         self.propagate_forward()
 
     def delta(self, layer):
-        self.target_vector = np.array([[1],[0]])
+        self.target_vector = np.array([[1],[0]])   # ---------> change this to be target output
         layer -= 1
         if layer + 1 == len(self.conf_list):
             d = self.activation_vectors[layer] * (1 - self.activation_vectors[layer]) * (self.activation_vectors[layer] - self.target_vector)  # <-- * = Hadamar Product
+
             return d
         else:
-            print(self.activation_vectors)
-            return self.activation_vectors[layer] * (1 - self.activation_vectors[layer]) * (self.weights_matrices[layer + 1].transpose @ self.delta(layer + 1))
+            return self.activation_vectors[layer] * (1 - self.activation_vectors[layer]) * (self.weights_matrices[layer].transpose() @ self.delta(layer + 2))
 
-    def calc_b(self, layer):
+    def update_b(self, layer, learning_rate):
+        for j in range(1, len(self.bias_matrices[layer - 2]) + 1):  # for every bias in that layer
+                # calculate the corresponding bias-gradient and update vector
+                self.bias_matrices[layer - 2][j-1] -= learning_rate * (self.delta(layer)[j-1])
         return self.delta(layer)
 
-    def calc_w(self, layer):
-        print("w-array")
-        w_array = []
+    def update_w(self, layer, learning_rate):
 
-        for i in range(1 , len(self.weights_matrices[layer - 2]) + 1):
-            for j in range(1, len(self.weights_matrices[layer - 2][i - 1] + 1)):
+        for i in range(1, len(self.weights_matrices[layer - 2]) + 1):  # for every row in weight-matrix(layer)
+            for j in range(1, len(self.weights_matrices[layer - 2][i - 1]) + 1):  # for every element in that row
+                # calculate the corresponding weight-gradient and write as vector
+                self.weights_matrices[layer - 2][i-1][j-1] -= learning_rate * (self.delta(layer)[i-1] * self.activation_vectors[layer - 2][j-1])
 
-                w_array.append([self.delta(layer)[i] * self.activation_vectors[layer - 2][j]])
+        for matrix in self.weights_matrices:
+            print("Matrix: ", matrix)
 
-        return np.array(w_array)
+    def save_outputs(self):
+        with open('ergebnisse.txt', 'a') as f:
+            f.write(str(self.cost_function()) + "," + str(self.output_vector).replace('\n', ",") + "," + str(self.itterations) + "\n")
+
