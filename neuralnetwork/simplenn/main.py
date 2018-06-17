@@ -86,7 +86,7 @@ class Main():
         a.test(self.input_vector_list[17])
         a.test(self.input_vector_list[1002])
         a.test(self.input_vector_list[102])
-        a.test(self.input_vector_list[302])
+        a.test(self.input_vector_list[20000])
         a.test(self.input_vector_list[999])
 
         a.nn_information()
