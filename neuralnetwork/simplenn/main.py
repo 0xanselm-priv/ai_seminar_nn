@@ -106,7 +106,7 @@ class Main():
 
         # j = 0
         # for i in self.input_vector_list:
-        #     a.apply_input(i)
+        #     a.apply_input(i)n
         #     a.target_vector_constructor(self.target_vector_list[j])
         #     a.cost_function()
         #     j += 1
