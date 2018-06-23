@@ -33,6 +33,8 @@ class Network:
                 else:
                     print("Sorry wrong dimension for your bias-matrix: Dimension ", bias[layer_num].shape)
 
+        elif weights == "xavier":
+            return None  # here you go mate
         else:
             print("You choose to randomly assign weights and bias.")
             for layer_num in range(self.layer_number - 1):
