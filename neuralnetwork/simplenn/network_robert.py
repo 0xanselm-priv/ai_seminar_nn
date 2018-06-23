@@ -65,18 +65,19 @@ class Network():
         self.save_outputs()
 
     def propagate_backwards(self):
-        for layer_num in range(len(self.conf_list) - 1):
-            self.update_w(layer_num + 2, 0.5)
-            self.update_b(layer_num + 2, 0.5)
-
+        for layer_num in range(self.layers_count - 1):
+            self.update_w(layer_num + 2, 0.05)
+            self.update_b(layer_num + 2, 0.05)
 
     def nn_setup(self):
-        self.weights_matrices = [np.array([[0.4, 2],[-1.3, 0.1], [0.4, 0.5]]),
-                                 np.array([[0.4, 0.3, 0.1], [0.4, 4, 0.1], [0.4, 3, 0.1], [4, 0.3, 0.1], [0.4, 0.3, 0.1]]),
-                                 np.array([[0.6, 0.2, -0.9, 0.7, 1.4],[0.4, 1.1, 0.7, 1.3, 0.1]])]
-        self.bias_matrices= [np.array([[0],[0.3],[2]]),
-                             np.array([[2], [0.3], [0.7], [-1.2], [3]]),
-                             np.array([[0.5],[0.6]])]
+        self.weights_matrices = [np.array([[2, 3], [4, 0.5], [-2, 0.1]]), np.array([[2, 3, 0.6]])]
+        # self.weights_matrices = [np.array([[0.4, 2],[-1.3, 0.1], [0.4, 0.5]]),
+        #                          np.array([[0.4, 0.3, 0.1], [0.4, 4, 0.1], [0.4, 3, 0.1], [4, 0.3, 0.1], [0.4, 0.3, 0.1]]),
+        #                          np.array([[0.6, 0.2, -0.9, 0.7, 1.4],[0.4, 1.1, 0.7, 1.3, 0.1]])]
+        # self.bias_matrices= [np.array([[0],[0.3],[2]]),
+        #                      np.array([[2], [0.3], [0.7], [-1.2], [3]]),
+        #                      np.array([[0.5],[0.6]])]
+        self.bias_matrices = [np.array([[1],[2],[0.5]]), np.array([[0.75]])]
 
     def nn_setup_rand(self):
         # setting up the network with random real numbers
@@ -105,12 +106,15 @@ class Network():
         print("Activation Function used:", self.activation_func)
         print("Input Size:", self.input_size, "x 1")
 
+    def sigmoid(self, value):
+        return (1 / (1 + math.exp(-value)))
+
     def vector_activator(self, matrix):
         if self.activation_func == "sigmoid":
-            for m in range(matrix.shape[0]):
-                a = matrix.item((m, 0))
-                a = (1 / (1 + np.exp(-a)))  # <------ could produce error
-                matrix.itemset((m, 0), a)
+            new = []
+            for eintrag in matrix:
+                new.append([self.sigmoid(eintrag[0])])
+            return np.array(new)
         elif self.activation_func == "relu":
             for m in range(matrix.shape[0]):
                 a = matrix.item((m, 0))
@@ -138,29 +142,23 @@ class Network():
         return cost
 
     def propagate_forward(self):
-        print("INPUT:::")
+        print("\n\n\nINPUT:::")
         print(self.input_vector)
-        self.activation_vectors = []
+        print(self.weights_matrices)
+        self.activation_vectors = [self.input_vector]
 
-        self.activation_vectors.append(self.input_vector)
+        for i in range(self.layers_count - 2):
+            print("iiiiii", self.weights_matrices[i])
+            vector = (self.weights_matrices[i] @ self.activation_vectors[-1]) + self.bias_matrices[i]
+            self.activation_vectors.append(self.vector_activator(vector))
 
-        a = self.weights_matrices[0] @ self.input_vector
-        a = a + self.bias_matrices[0]
-        a = self.vector_activator(a)  # <---- applies the activation function on vector
 
-        self.activation_vectors.append(a)
+        print("àaaaa",self.activation_vectors)
+        self.output_vector = (self.weights_matrices[-1] @ self.activation_vectors[-1]) + self.bias_matrices[-1]
+        self.activation_vectors.append(self.output_vector)
 
-        for i in range(1, self.layers_count - 1):
 
-            a = self.weights_matrices[i] @ a  # a is last activation
-            a = a + self.bias_matrices[i]
-            a = self.vector_activator(a)
-
-            self.activation_vectors.append(a)
-
-        self.output_vector = a
-
-        print("\n\n")
+        print("\nOutput:\n")
         print(self.output_vector)
 
     def target_vector_constructor(self, target_output):
