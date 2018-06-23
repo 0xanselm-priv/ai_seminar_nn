@@ -12,6 +12,8 @@ class Network:
         self.weights = []
         self.bias = []
         self.activation = []
+        self.output = 0
+        self.target = 0
 
         self.layer_init(layer_infos, weights, bias)
         self.print_nn_info()
@@ -40,18 +42,20 @@ class Network:
             for layer_num in range(self.layer_number - 1):
                 self.weights.append(np.matrix(np.random.randint(5, size=(layer_infos[layer_num + 1], layer_infos[layer_num]))))
 
-            for neuron_num in layer_infos:
-                self.bias.append(np.matrix(np.random.randint(5, size=(neuron_num, 1))))
+            for layer_num in range(self.layer_number - 1):
+                self.bias.append(np.matrix(np.random.randint(5, size=(layer_infos[layer_num + 1], 1))))
 
 
     def print_nn_info(self):
         print("A CNN with " + str(self.layer_number) + " layers.")
         for layer_num in range(self.layer_number):
             print("Layer", str(layer_num), "with", self.layer_infos[layer_num], "nodes")
-        for i in range(len(self.bias) - 1):
+
+        print(self.bias)
+        for i in range(len(self.bias)):
             layer_str = "Weight Matrix. Layer " + \
                 str(i) + " -> " + str(i + 1) + " Matrix " + "\n"
-            bias_str = "Layer " + str(i) + " Bias Vector." + "\n"
+            bias_str = "Layer " + str(i + 1) + " Bias Vector." + "\n"
             print(layer_str, self.weights[i])
             print(bias_str, self.bias[i])
         print("Activation Function used:", self.activation_function)
@@ -64,16 +68,42 @@ class Network:
                 new.append([(1 / (1 + math.exp(-entry[0])))])
             return np.matrix(new)
 
-
     def propagate_forwards(self, inp):
-        self.activation = [[np.matrix(inp)]]
-        for layer in range(self.layer_number - 1):
-            self.activation.append(self.weights[layer] * self.activation[-1] + self.bias[layer])
+        self.activation = [np.matrix(inp)]
+        print("\n\n", self.activation[-1], "\n\n",self.weights[0])
+        for layer in range(self.layer_number - 2):
+            self.activation.append((self.activate(self.weights[layer] * self.activation[-1]) + self.bias[layer]))
 
+        output = self.weights[-1] * self.activation[-1] + self.bias[-1]
+        self.activation.append(output)
+        return output
+
+    def cost(self):
+        cost = self.target - self.output
+        cost = np.linalg.norm(cost)
+        cost = 1/2 * np.square(cost)
+        return cost
+
+    def test(self, inp):
+        print(self.propagate_forwards(inp))
+
+    def test_info(self, inp, tar):
+        self.target = np.matrix(tar)
+        self.output = self.propagate_forwards(inp)
+        cost = self.cost()
+        print("\nFor Input: \n", np.matrix(inp), "\nAnd desired output: \n", self.target, "\nWe got: \n", self.output, "\nCost: \n", cost)
+
+    def delta(self, layer):
+        if layer == self.layer_number - 1:
+            return np.multiply((self.activation[layer - 1] * (1 - self.activation[layer - 1])), (self.output - self.target))
+        else:
+            return np.multiply((self.activation[layer - 1] * (1 - self.activation[layer - 1])), self.weights[layer].transpose * self.delta(layer + 1))
 
 
 
 
 A = Network([(3),(2),(2)], "sigmoid")
+
+A.test_info([[3],[2],[2]], [[2],[2]])
 
 
