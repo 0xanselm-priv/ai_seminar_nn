@@ -143,7 +143,15 @@ class Network:
 
     def delta(self, layer):
         if layer == self.layer_number - 1:
-            return np.multiply((self.activation[layer - 1] * (1 - self.activation[layer - 1])), (self.output - self.target))
+            return np.multiply((self.activation[-1] * (1 - self.activation[-1])), (self.output - self.target))  # self.output == self.activation[-1]
         else:
-            return np.multiply((self.activation[layer - 1] * (1 - self.activation[layer - 1])), self.weights[layer].transpose * self.delta(layer + 1))
+            return np.multiply((self.activation[layer] * (1 - self.activation[layer])), self.weights[layer].transpose * self.delta(layer + 1))
+
+    def update_b(self):
+        for bias in range(len(self.bias)):
+            for entry in range(len(bias)):
+                self.bias
+
+
+
 
