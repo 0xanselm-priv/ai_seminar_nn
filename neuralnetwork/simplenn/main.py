@@ -36,7 +36,7 @@ class Main():
 
     def main(self):
         a = network_class.Network([(2), (3), (2)], weights=[np.matrix([[0.4, 2], [-1.3, 0.1], [0.4, 0.5]]), np.matrix([[0.6, 0.2, -0.9], [0.4, 1.1, 0.7]])], bias=[np.matrix([[0], [0.3], [2]]), np.matrix([[0.6], [0.5]])],activation_function="sigmoid", initilizer="predefined")
-        #a.test_train([[3], [2], [2]], [[2], [2]])
+        a.test_train([[2], [1]], [[1], [0]])
 
         
 if __name__ == "__main__":

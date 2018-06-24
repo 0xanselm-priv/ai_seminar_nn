@@ -145,7 +145,6 @@ class Network:
 
     def delta(self, layer):
         if layer == self.layer_number - 1:
-            print("DELTA FOR LAYER L ",np.multiply(np.multiply(self.activation[-1], (1 - self.activation[-1])), (self.output - self.target)))
             return np.multiply(np.multiply(self.activation[-1], (1 - self.activation[-1])), (self.output - self.target))  # self.output == self.activation[-1]
         else:
             return np.multiply(np.multiply(self.activation[layer], (1 - self.activation[layer])), np.transpose(self.weights[layer]) * self.delta(layer + 1))
@@ -153,23 +152,26 @@ class Network:
     def update_b(self, eta):
         for layer in range(self.layer_number - 1):
             for entry in range(len(self.bias[layer])):
-                self.bias[layer][entry] = self.bias[layer][entry] + eta * self.delta(layer)[entry]
+                self.bias[layer][entry] = self.bias[layer][entry] + eta * self.delta(layer + 1)[entry]
 
     def update_w(self, eta):
         for layer in range(self.layer_number - 1):
-            for entry in range(len(self.weights[layer])):
-                for target in range(len(self.weights[layer][entry])):
-                    self.weights[layer][entry][target] = self.weights[layer][entry][target] + eta * (self.delta(layer)[entry] * self.activation[layer][target])
+            for entry in range(self.weights[layer].shape[0]):
+                for target in range(self.weights[layer].shape[1]):
+                    self.weights[layer].itemset((entry, target), self.weights[layer].item(entry, target) + eta * (self.delta(layer + 1).item(entry) * self.activation[layer].item(target)))
 
     def backpropagation(self):
-        eta = 0.05
+        eta = 0.005
         self.update_b(eta)
         self.update_w(eta)
 
     def test_train(self, inp, tar):
+        tar = [tar[1],tar[0]]
         print("TESTING BACKPROP!")
         self.test_info(inp, tar)
-        self.backpropagation()
-        self.test_info(inp, tar)
+        for i in range(2000):
+            self.backpropagation()
+            self.test_info(inp, tar)
         self.print_nn_info()
+
 
