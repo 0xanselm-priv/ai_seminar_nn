@@ -4,6 +4,7 @@ import sys
 
 # DEUTSCHLAND... DEUUUUUUUUTSCHLAND
 
+
 class Network:
 
     def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random"):
@@ -26,6 +27,12 @@ class Network:
             return("Random")
         elif self.initializer == "xavier_sigmoid":
             return("Xavier Sigmoid")
+        elif self.initializer == "xavier_relu":
+            return("Xavier Relu")
+        elif self.initializer == "xavier_bengio":
+            return("Xavier and Bengio")
+        elif self.initializer == "xavier_tf":
+            return("Xavier TensorFlow")
         else:
             print("Wrong Initializer")
             sys.exit()
@@ -38,10 +45,23 @@ class Network:
         elif self.initializer == "xavier_sigmoid":
             for layer_num in range(self.layer_number - 1):
                 # TO DO
-                self.weights.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]))))
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(1 / self.layer_number))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
-        for i in self.weights:
-            print(i.shape)
+        elif self.initializer == "xavier_relu":
+            for layer_num in range(self.layer_number - 1):
+                # TO DO
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(2 / self.layer_number))
+                self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
+        elif self.initializer == "xavier_bengio":
+            for layer_num in range(self.layer_number - 1):
+                # TO DO
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(2 / self.layer_number + self.layer_number + 1))
+                self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
+        elif self.initializer == "xavier_tf":
+            for layer_num in range(self.layer_number - 1):
+                # TO DO
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(6 / self.layer_number + self.layer_number + 1))
+                self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         
 #     def layer_init(self, layer_infos, weights, bias):
 #         if type(weights) == np.matrixlib.defmatrix.matrix and type(bias) == np.matrixlib.defmatrix.matrix:  # if weights are matrices
@@ -70,7 +90,7 @@ class Network:
         for layer_num in range(self.layer_number):
             print("Layer", str(layer_num), "with", self.layer_infos[layer_num], "nodes")
 
-        print(self.bias)
+#         print(self.bias)
         for i in range(len(self.bias)):
             layer_str = "Weight Matrix. Layer " + \
                 str(i) + " -> " + str(i + 1) + " Matrix " + "\n"
