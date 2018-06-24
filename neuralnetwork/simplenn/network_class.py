@@ -68,7 +68,7 @@ class Network:
             for layer_num in range(self.layer_number - 1):
                 self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(6 / self.layer_number + self.layer_number + 1))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
-        print(self.weights)
+                
 #     def layer_init(self, layer_infos, weights, bias):
 #         if type(weights) == np.matrixlib.defmatrix.matrix and type(bias) == np.matrixlib.defmatrix.matrix:  # if weights are matrices
 #             for layer_num in range(self.layer_number):
