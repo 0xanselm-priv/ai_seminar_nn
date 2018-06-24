@@ -76,8 +76,6 @@ class Network:
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
                 
     def layer_init(self, layer_infos, weights, bias):
-        print(weights)
-        print(bias)
         if type(weights) == list and type(bias) == list:  # if weights are matrices
             for layer_num in range(self.layer_number - 1):
                 # check whether weight-matrix is right shape
