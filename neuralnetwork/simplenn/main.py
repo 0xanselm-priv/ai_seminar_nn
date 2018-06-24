@@ -34,7 +34,7 @@ class Main():
         self.main()
 
     def main(self):
-        a = network_class.Network([(3), (2), (2)], activation_function="sigmoid", initilizer="xavier_tf")
+        a = network_class.Network([(3), (2), (2)], activation_function="sigmoid", initilizer="seed")
         a.test_info([[3], [2], [2]], [[2], [2]])
 
         
