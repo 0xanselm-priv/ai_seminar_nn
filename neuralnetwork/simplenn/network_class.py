@@ -17,9 +17,13 @@ class Network:
         self.activation = []
         self.output = 0
         self.target = 0
-        
-        self.initializers()
-        # self.layer_init(layer_infos, weights, bias)
+
+        if self.initializer == "predefined":
+            print("Setting up Network...")
+            self.layer_init(layer_infos, weights, bias)
+        else:
+            self.initializers()
+
         self.print_nn_info()
     
     def print_initilizer(self):
@@ -35,6 +39,8 @@ class Network:
             return("Xavier TensorFlow")
         elif self.initializer == "seed":
             return("Random with Seed")
+        elif self.initializer == "predefined":
+            return("Predefined Weights and Bias")
         else:
             print("Wrong Initializer")
             sys.exit()
@@ -69,25 +75,24 @@ class Network:
                 self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(6 / self.layer_number + self.layer_number + 1))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
                 
-#     def layer_init(self, layer_infos, weights, bias):
-#         if type(weights) == np.matrixlib.defmatrix.matrix and type(bias) == np.matrixlib.defmatrix.matrix:  # if weights are matrices
-#             for layer_num in range(self.layer_number):
-#                 # check whether weight-matrix is right shape
-#                 if weights[layer_num].shape == (layer_infos[layer_num], layer_infos[layer_num + 1]):
-#                     self.weights.append(weights[layer_num])
-#                 else:
-#                     print("Error in weight-matrix: Dimension ", weights[layer_num].shape)
-#                 if bias[layer_num].shape == (layer_infos[layer_num], 1):
-#                     self.bias.append(bias[layer_num])
-#                 else:
-#                     print("Error in bias-matrix: Dimension ", bias[layer_num].shape)
-# 
-#         elif isinstance(weights, str):
-#             self.initializers(weights)
-#         
-#         else:
-#             print("Randomly initialized weights and biases.")
-#             pass
+    def layer_init(self, layer_infos, weights, bias):
+        print(weights)
+        print(bias)
+        if type(weights) == list and type(bias) == list:  # if weights are matrices
+            for layer_num in range(self.layer_number - 1):
+                # check whether weight-matrix is right shape
+                if weights[layer_num].shape == (layer_infos[layer_num + 1], layer_infos[layer_num]):
+                    self.weights.append(weights[layer_num])
+                else:
+                    print("Error in weight-matrix: Dimension ", weights[layer_num].shape)
+            for layer_num in range(self.layer_number - 1):
+                if bias[layer_num].shape == (layer_infos[layer_num + 1], 1):
+                    self.bias.append(bias[layer_num])
+                else:
+                    print("Error in bias-matrix: Dimension ", bias[layer_num].shape)
+        else:
+            print("Wrong weight or bias format!")
+
 
     def print_nn_info(self):
         print("A CNN with " + str(self.layer_number) + " layers.")
@@ -96,7 +101,6 @@ class Network:
         for layer_num in range(self.layer_number):
             print("Layer", str(layer_num), "with", self.layer_infos[layer_num], "nodes")
 
-#         print(self.bias)
         for i in range(len(self.bias)):
             layer_str = "Weight Matrix. Layer " + \
                 str(i) + " -> " + str(i + 1) + " Matrix " + "\n"
@@ -118,7 +122,7 @@ class Network:
 
     def propagate_forwards(self, inp):
         self.activation = [np.matrix(inp)]
-        print("\n\n", self.activation[-1], "\n\n", self.weights[0])
+
         for layer in range(self.layer_number - 2):
             self.activation.append((self.activate(self.weights[layer] * self.activation[-1]) + self.bias[layer]))
 
@@ -143,15 +147,31 @@ class Network:
 
     def delta(self, layer):
         if layer == self.layer_number - 1:
-            return np.multiply((self.activation[-1] * (1 - self.activation[-1])), (self.output - self.target))  # self.output == self.activation[-1]
+            print("DELTA FOR LAYER L ",np.multiply(np.multiply(self.activation[-1], (1 - self.activation[-1])), (self.output - self.target)))
+            return np.multiply(np.multiply(self.activation[-1], (1 - self.activation[-1])), (self.output - self.target))  # self.output == self.activation[-1]
         else:
-            return np.multiply((self.activation[layer] * (1 - self.activation[layer])), self.weights[layer].transpose * self.delta(layer + 1))
+            return np.multiply(np.multiply(self.activation[layer], (1 - self.activation[layer])), np.transpose(self.weights[layer]) * self.delta(layer + 1))
 
-    def update_b(self):
-        for bias in range(len(self.bias)):
-            for entry in range(len(bias)):
-                self.bias
+    def update_b(self, eta):
+        for layer in range(self.layer_number - 1):
+            for entry in range(len(self.bias[layer])):
+                self.bias[layer][entry] = self.bias[layer][entry] + eta * self.delta(layer)[entry]
 
+    def update_w(self, eta):
+        for layer in range(self.layer_number - 1):
+            for entry in range(len(self.weights[layer])):
+                for target in range(len(self.weights[layer][entry])):
+                    self.weights[layer][entry][target] = self.weights[layer][entry][target] + eta * (self.delta(layer)[entry] * self.activation[layer][target])
 
+    def backpropagation(self):
+        eta = 0.05
+        self.update_b(eta)
+        self.update_w(eta)
 
+    def test_train(self, inp, tar):
+        print("TESTING BACKPROP!")
+        self.test_info(inp, tar)
+        self.backpropagation()
+        self.test_info(inp, tar)
+        self.print_nn_info()
 
