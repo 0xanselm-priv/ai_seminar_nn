@@ -27,16 +27,43 @@ __email__ = ""
 
 import numpy as np
 import network_class
+import random
 
 
 class Main():
 
     def __init__(self):
         self.main()
+        self.training_points = []
+
+
 
     def main(self):
-        a = network_class.Network([(2), (3), (2)], weights=[np.matrix([[0.4, 2], [-1.3, 0.1], [0.4, 0.5]]), np.matrix([[0.6, 0.2, -0.9], [0.4, 1.1, 0.7]])], bias=[np.matrix([[0], [0.3], [2]]), np.matrix([[0.6], [0.5]])],activation_function="sigmoid", initilizer="predefined")
-        a.test_train([[2], [1]], [[1], [0]])
+        wei = [np.matrix([[0.4, 2], [-1.3, 0.1], [0.4, 0.5]]), np.matrix([[0.6, 0.2, -0.9], [0.4, 1.1, 0.7]])]
+        bia = [np.matrix([[0], [0.3], [2]]), np.matrix([[0.6], [0.5]])]
+        a = network_class.Network([(2), (3), (3), (2)], weights= wei, bias=bia, activation_function="sigmoid", initilizer="predefined")
+
+        x = self.create_training_samples()
+
+        for i in random.sample(x, 1000):
+            a.test_train(i, self.create_target(i))
+
+        a.print_nn_info()
+
+    def create_training_samples(self):
+        training_points = []
+        for i in range(100):
+            for j in range(100):
+                training_points.append([[i], [j]])
+        return training_points
+
+    def create_target(self, inp):
+        if inp[0][0] > 50:
+            return [[1],[0]]
+        else:
+            return [[0],[1]]
+
+
 
         
 if __name__ == "__main__":

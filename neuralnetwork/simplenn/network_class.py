@@ -76,7 +76,7 @@ class Network:
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
                 
     def layer_init(self, layer_infos, weights, bias):
-        if type(weights) == list and type(bias) == list:  # if weights are matrices
+        if type(weights) == list and type(bias) == list and len(weights) == self.layer_number - 1:  # if weights are matrices
             for layer_num in range(self.layer_number - 1):
                 # check whether weight-matrix is right shape
                 if weights[layer_num].shape == (layer_infos[layer_num + 1], layer_infos[layer_num]):
@@ -90,6 +90,7 @@ class Network:
                     print("Error in bias-matrix: Dimension ", bias[layer_num].shape)
         else:
             print("Wrong weight or bias format!")
+            sys.exit()
 
 
     def print_nn_info(self):
@@ -112,6 +113,7 @@ class Network:
             new = []
             for entry in inp:
                 new.append([(1 / (1 + math.exp(-entry[0])))])
+            print(new)
             return np.matrix(new)
         elif self.activate_function == "relu":
             # TO DO
@@ -166,12 +168,9 @@ class Network:
         self.update_w(eta)
 
     def test_train(self, inp, tar):
-        tar = [tar[1],tar[0]]
         print("TESTING BACKPROP!")
         self.test_info(inp, tar)
-        for i in range(2000):
-            self.backpropagation()
-            self.test_info(inp, tar)
-        self.print_nn_info()
+        self.backpropagation()
+
 
 
