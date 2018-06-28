@@ -7,7 +7,9 @@ import sys
 
 class Network:
 
-    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random"):
+    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random", activate_all_layers = True, training = "single"):
+        self.training = training
+        self.activate_all_layers = activate_all_layers
         self.activation_function = activation_function
         self.initializer = initilizer
         self.layer_infos = layer_infos
@@ -17,6 +19,9 @@ class Network:
         self.activation = []
         self.output = 0
         self.target = 0
+        self.gradient_v = 0
+        self.iteration = 1
+        self.dt = np.dtype("Float64")
 
         if self.initializer == "predefined":
             print("Setting up Network...")
@@ -90,6 +95,7 @@ class Network:
                     print("Error in bias-matrix: Dimension ", bias[layer_num].shape)
         else:
             print("Wrong weight or bias format!")
+            print(type(bias))
             sys.exit()
 
 
@@ -108,12 +114,12 @@ class Network:
             print(bias_str, self.bias[i])        
         print("Input Size:", self.layer_infos[0], "x 1")
 
+
     def activate(self, inp):
         if self.activation_function == "sigmoid":
             new = []
             for entry in inp:
-                new.append([(1 / (1 + math.exp(-entry[0])))])
-            print(new)
+                new.append([(1 / (1 + math.exp(-entry.item(0))))])
             return np.matrix(new)
         elif self.activate_function == "relu":
             # TO DO
@@ -124,9 +130,12 @@ class Network:
         self.activation = [np.matrix(inp)]
 
         for layer in range(self.layer_number - 2):
-            self.activation.append((self.activate(self.weights[layer] * self.activation[-1]) + self.bias[layer]))
+            self.activation.append((self.activate(self.weights[layer] * self.activation[-1] + self.bias[layer])))
 
-        output = self.weights[-1] * self.activation[-1] + self.bias[-1]
+        if self.activate_all_layers:
+            output = self.activate(self.weights[-1] * self.activation[-1] + self.bias[-1])
+        else:
+            output = self.weights[-1] * self.activation[-1] + self.bias[-1]
         self.activation.append(output)
         return output
 
@@ -137,7 +146,7 @@ class Network:
         return cost
 
     def test(self, inp):
-        print(self.propagate_forwards(inp))
+        return self.propagate_forwards(inp)
 
     def test_info(self, inp, tar):
         self.target = np.matrix(tar)
@@ -147,30 +156,58 @@ class Network:
 
     def delta(self, layer):
         if layer == self.layer_number - 1:
-            return np.multiply(np.multiply(self.activation[-1], (1 - self.activation[-1])), (self.output - self.target))  # self.output == self.activation[-1]
+            return np.multiply(np.multiply(self.activation[-1], (1 - self.activation[-1])), (self.target - self.output))  # self.output == self.activation[-1]
         else:
             return np.multiply(np.multiply(self.activation[layer], (1 - self.activation[layer])), np.transpose(self.weights[layer]) * self.delta(layer + 1))
 
-    def update_b(self, eta):
-        for layer in range(self.layer_number - 1):
-            for entry in range(len(self.bias[layer])):
-                self.bias[layer][entry] = self.bias[layer][entry] + eta * self.delta(layer + 1)[entry]
+    def update_b(self, eta, layer):
+        for entry in range(len(self.bias[layer])):
+            self.bias[layer].itemset(entry, self.bias[layer].item(entry) + eta * self.gradient_v.item(0))
+            self.gradient_v = np.delete(self.gradient_v, 0, 0)
 
-    def update_w(self, eta):
+    def update_w(self, eta, layer):
+        for entry in range(self.weights[layer].shape[0]):
+            for target in range(self.weights[layer].shape[1]):
+                self.weights[layer].itemset((entry, target), self.weights[layer].item(entry, target) + eta * self.gradient_v.item(0))
+                self.gradient_v = np.delete(self.gradient_v, 0, 0)
+
+    def gradient_w(self, layer, to, fro):
+        return self.delta(layer + 1).item(to) * self.activation[layer].item(fro)
+
+    def gradient_b(self, layer, node):
+        return self.delta(layer + 1)[node]
+
+    def update(self, eta):
+        for layer in range(self.layer_number - 1):
+            self.update_w(eta, layer)
+            self.update_b(eta, layer)
+
+    def gradient_vector(self):  # not perfect
+        vector = []
         for layer in range(self.layer_number - 1):
             for entry in range(self.weights[layer].shape[0]):
                 for target in range(self.weights[layer].shape[1]):
-                    self.weights[layer].itemset((entry, target), self.weights[layer].item(entry, target) + eta * (self.delta(layer + 1).item(entry) * self.activation[layer].item(target)))
+                    vector.append([self.gradient_w(layer, entry, target)])
+            for entry in range(len(self.bias[layer])):
+                vector.append([self.gradient_b(layer, entry)])
+        return np.matrix(vector, dtype="Float64")
 
-    def backpropagation(self):
-        eta = 0.005
-        self.update_b(eta)
-        self.update_w(eta)
 
-    def test_train(self, inp, tar):
+    def train_batch(self, inp_list, target_list):
+        for i in range(len(inp_list)):
+            print("TESTING BACKPROP!")
+            self.test_info(inp_list[i], target_list[i])
+            self.gradient_v += self.gradient_vector()
+        self.gradient_v = self.gradient_v / len(inp_list)
+        self.update(0.05)
+
+
+    def test_train_single(self, inp, tar):
         print("TESTING BACKPROP!")
         self.test_info(inp, tar)
-        self.backpropagation()
+        self.gradient_v = self.gradient_vector()
+        self.update(0.05)
+        self.print_nn_info()
 
 
 
