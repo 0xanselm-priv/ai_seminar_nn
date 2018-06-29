@@ -66,7 +66,7 @@ class Network:
         elif self.initializer == "xavier_sigmoid":
             for layer_num in range(self.layer_number - 1):
                 self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(1 / self.layer_number))
-                self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
+                self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1)), self.dt))
         elif self.initializer == "xavier_relu":
             for layer_num in range(self.layer_number - 1):
                 self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(2 / self.layer_number))
@@ -142,7 +142,7 @@ class Network:
     def cost(self):
         cost = self.target - self.output
         cost = np.linalg.norm(cost)
-        cost = 1 / 2 * np.square(cost)
+        cost = np.square(cost)
         return cost
 
     def test(self, inp):
@@ -153,6 +153,7 @@ class Network:
         self.output = self.propagate_forwards(inp)
         cost = self.cost()
         print("\nInput: \n", np.matrix(inp), "\nTarget Output: \n", self.target, "\nOutput: \n", self.output, "\nCost: \n", cost)
+        return self.output
 
     def delta(self, layer):
         if layer == self.layer_number - 1:
@@ -162,6 +163,7 @@ class Network:
 
     def update_b(self, eta, layer):
         for entry in range(len(self.bias[layer])):
+            print(self.gradient_v.item(0))
             self.bias[layer].itemset(entry, self.bias[layer].item(entry) + eta * self.gradient_v.item(0))
             self.gradient_v = np.delete(self.gradient_v, 0, 0)
 
@@ -194,6 +196,7 @@ class Network:
 
 
     def train_batch(self, inp_list, target_list):
+        self.gradient_v = 0
         for i in range(len(inp_list)):
             print("TESTING BACKPROP!")
             self.test_info(inp_list[i], target_list[i])
@@ -208,6 +211,7 @@ class Network:
         self.gradient_v = self.gradient_vector()
         self.update(0.05)
         self.print_nn_info()
+
 
 
 

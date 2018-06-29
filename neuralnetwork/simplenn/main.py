@@ -29,6 +29,7 @@ import numpy as np
 import network_class
 import random
 from tkinter import *
+import matplotlib.pyplot as plt
 
 class Main():
 
@@ -41,27 +42,74 @@ class Main():
 
     def main(self):
         dt = np.dtype("Float64")
-        wei = [np.matrix([[3]], dt), np.matrix([[3]], dt)]
+        wei = [np.matrix([[0.9, 0.8]], dt)]
         #wei = [np.matrix([[0.5, .5], [0.5, 0.5], [0.5, 0.5]]), np.matrix([[0.3333, 0.3333, .3333], [0.3333, 0.33333, 0.33333]])]
-        bia = [np.matrix([[1]], dt), np.matrix([[2]], dt)]
+        bia = [np.matrix([[1]], dt)]
         #bia = [np.matrix([[0.33], [0.33], [0.33]]), np.matrix([[0.5], [0.5]])]
-        a = network_class.Network([(1), (1), (1), (1)], weights= wei, bias=bia, activation_function="sigmoid", initilizer="xavier_sigmoid")
+        a = network_class.Network([(2), (1)], weights= wei, bias=bia, activation_function="sigmoid", initilizer="xavier_sigmoid")
+
+# ----- Flower Example 2-1 Network
+
+        data = [[3, 1.5, 1], [2, 1, 0], [4, 1.5, 1], [3, 1, 0], [3.5, .5, 1], [2, .5, 0], [5.5, 1, 1], [1, 1, 0]]
+        mysteriy = []
+
+        costs = []
+
+        for i in range(10000):
+            ind = np.random.randint(len(data))
+            point = data[ind]
+            a.test_train_single([[point[0]], [point[1]]], [point[2]])
+            costs.append(a.cost())
+
+        graph_x = []
+        graph_y = []
+
+        graph_x_r = []
+        graph_y_r = []
+
+        graph_x_b  = []
+        graph_y_b = []
+
+        for m in range(len(data)):
+            graph_x.append(data[m][0])
+            graph_y.append(data[m][1])
+
+        for y in range(len(graph_x)):
+            pred = a.test_info([[graph_x[y]],[graph_y[y]]], [data[y][2]])
+            if pred.item(0) > 0.5:
+                graph_x_r.append(graph_x[y])
+                graph_y_r.append(graph_y[y])
+            else:
+                graph_x_b.append(graph_x[y])
+                graph_y_b.append(graph_y[y])
+
+        plt.plot(graph_x_r, graph_y_r, 'ro')
+        plt.plot(graph_x_b, graph_y_b, 'bo')
+
+        plt.show()
+
+        plt.plot(costs)
+        plt.show()
 
 # ----- Training a simple 1-1-1 Network
-        x = [[0.5]]
-        a.test_train_single(x, [[0]])
-        a.test_info(x, [[0]])
+#         x = [[0.5]]
+#         a.test_train_single(x, [[0]])
+#         a.test_info(x, [[0]])
 
 # ------ Training with 4 Inputs, 2 Hidden Layers, 1 Output
-        # x = self.create_training_samples()
-        #
-        # print("Hallo")
-        # print(len(x))
-        #
+#         x = self.create_training_samples()
+#
+#         print("Hallo")
+#         print(len(x))
+
         # for i in random.sample(x, 10000):
         #     a.test_train(i, self.create_target(i))
         #
         # a.print_nn_info()
+        #
+        # for i in range(20):
+        #     y = self.create_batch(x)
+        #     a.train_batch(y[0],y[1])
         #
         #
         # im = [[0.9], [0.2], [0.3], [0.0]]
@@ -84,6 +132,15 @@ class Main():
         #
         # self.draw_image(img_list)
         # self.draw_image(img_list_2)
+
+    def create_batch(self, x):
+        target = []
+        batch = []
+        for i in random.sample(x, 20):
+            batch.append(i)
+            target.append(self.create_target(i))
+        return batch, target
+
 
     def create_training_samples(self):
         training_points = []
