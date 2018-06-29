@@ -163,7 +163,6 @@ class Network:
 
     def update_b(self, eta, layer):
         for entry in range(len(self.bias[layer])):
-            print(self.gradient_v.item(0))
             self.bias[layer].itemset(entry, self.bias[layer].item(entry) + eta * self.gradient_v.item(0))
             self.gradient_v = np.delete(self.gradient_v, 0, 0)
 

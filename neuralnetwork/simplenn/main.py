@@ -30,6 +30,7 @@ import network_class
 import random
 from tkinter import *
 import matplotlib.pyplot as plt
+import cv2
 
 class Main():
 
@@ -46,50 +47,54 @@ class Main():
         #wei = [np.matrix([[0.5, .5], [0.5, 0.5], [0.5, 0.5]]), np.matrix([[0.3333, 0.3333, .3333], [0.3333, 0.33333, 0.33333]])]
         bia = [np.matrix([[1]], dt)]
         #bia = [np.matrix([[0.33], [0.33], [0.33]]), np.matrix([[0.5], [0.5]])]
-        a = network_class.Network([(2), (1)], weights= wei, bias=bia, activation_function="sigmoid", initilizer="xavier_sigmoid")
+
 
 # ----- Flower Example 2-1 Network
-
-        data = [[3, 1.5, 1], [2, 1, 0], [4, 1.5, 1], [3, 1, 0], [3.5, .5, 1], [2, .5, 0], [5.5, 1, 1], [1, 1, 0]]
-        mysteriy = []
-
-        costs = []
-
-        for i in range(10000):
-            ind = np.random.randint(len(data))
-            point = data[ind]
-            a.test_train_single([[point[0]], [point[1]]], [point[2]])
-            costs.append(a.cost())
-
-        graph_x = []
-        graph_y = []
-
-        graph_x_r = []
-        graph_y_r = []
-
-        graph_x_b  = []
-        graph_y_b = []
-
-        for m in range(len(data)):
-            graph_x.append(data[m][0])
-            graph_y.append(data[m][1])
-
-        for y in range(len(graph_x)):
-            pred = a.test_info([[graph_x[y]],[graph_y[y]]], [data[y][2]])
-            if pred.item(0) > 0.5:
-                graph_x_r.append(graph_x[y])
-                graph_y_r.append(graph_y[y])
-            else:
-                graph_x_b.append(graph_x[y])
-                graph_y_b.append(graph_y[y])
-
-        plt.plot(graph_x_r, graph_y_r, 'ro')
-        plt.plot(graph_x_b, graph_y_b, 'bo')
-
-        plt.show()
-
-        plt.plot(costs)
-        plt.show()
+#
+# """
+#          a = network_class.Network([(2), (2), (1)], weights= wei, bias=bia, activation_function="sigmoid", initilizer="xavier_sigmoid")
+#
+#         data = [[3, 1.5, 1], [2, 1, 0], [4, 1.5, 1], [3, 1, 0], [3.5, .5, 1], [2, .5, 0], [5.5, 1, 1], [1, 1, 0]]
+#         mysteriy = []
+#
+#         costs = []
+#
+#         for i in range(19999):
+#             ind = np.random.randint(len(data))
+#             point = data[ind]
+#             a.test_train_single([[point[0]], [point[1]]], [point[2]])
+#             costs.append(a.cost())
+#
+#         graph_x = []
+#         graph_y = []
+#
+#         graph_x_r = []
+#         graph_y_r = []
+#
+#         graph_x_b  = []
+#         graph_y_b = []
+#
+#         for m in range(len(data)):
+#             graph_x.append(data[m][0])
+#             graph_y.append(data[m][1])
+#
+#         for y in range(len(graph_x)):
+#             pred = a.test_info([[graph_x[y]],[graph_y[y]]], [data[y][2]])
+#             if pred.item(0) > 0.5:
+#                 graph_x_r.append(graph_x[y])
+#                 graph_y_r.append(graph_y[y])
+#             else:
+#                 graph_x_b.append(graph_x[y])
+#                 graph_y_b.append(graph_y[y])
+#
+#         plt.plot(graph_x_r, graph_y_r, 'ro')
+#         plt.plot(graph_x_b, graph_y_b, 'bo')
+#
+#         plt.show()
+#
+#         plt.plot(costs)
+#         plt.show()
+# """
 
 # ----- Training a simple 1-1-1 Network
 #         x = [[0.5]]
@@ -120,18 +125,69 @@ class Main():
         # a.test_info(im, self.create_target(im))
         # a.test_info(aus, self.create_target(aus))
 
+# ------ Binary 4-Digits --> ODD/EVEN
+
+        b = network_class.Network([(4), (3), (1)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_sigmoid")
+
+        data_b = []
+
+        for first in range(2):
+            for second in range(2):
+                for third in range(2):
+                    for fourth in range(2):
+                        data_b.append([[first],[second],[third],[fourth]])
+
+        print(len(data_b))
+
+        x = random.sample(data_b, 8)  # <--- Take only a small amount of numbers train with these. 8 of 16 is very good!
+        costs_b = []
+
+
+        # TRAINING
+
+        for i in range(10000):
+            ind = np.random.randint(len(x))
+            point = x[ind]
+            b.test_train_single(point, [eval("0b" + str(point[0][0]) + str(point[1][0]) + str(point[2][0]) + str(point[3][0])) % 2])
+            costs_b.append(b.cost())
+
+        values = []
+
+        for data in data_b:
+            values.append(b.test(data).item(0))
+
+        print(x)
+
+        plt.plot(costs_b)
+        plt.show()
+
+        plt.plot(values)
+        plt.show()
+
+
+
+
 
 # ------ Image creation
-        # img_list = np.full((100, 100), '#ffffff')
-        # img_list_2 = np.full((100, 100), '#ffffff')
-        #
-        # for i in x:
-        #     output = a.test(i)
-        #     img_list[i[0][0]][i[1][0]] = self.color_set(output.item(0))
-        #     img_list_2[i[0][0]][i[1][0]] = self.color_set(output.item(1))
-        #
-        # self.draw_image(img_list)
-        # self.draw_image(img_list_2)
+#         img_list = np.full((50, 20), '#ffffff')
+#         img_list_2 = np.full((100, 100), '#ffffff')
+#
+#
+#         img = cv2.imread('/Users/nielsheissel/Desktop.1.jpg', 1)
+#         x = []
+#         for m in range(50):
+#             for y in range(20):
+#                 x.append([[m/10],[y/10]])
+#
+#         for i in x:
+#             output = a.test(i)
+#             img_list[int(i[0][0]*10)][int(i[1][0]*10)] = output.item(0,0)
+#             print(type(output.item(0,0)))
+#
+#         print(img)
+#
+#         plt.imshow(img)
+
 
     def create_batch(self, x):
         target = []
@@ -169,11 +225,11 @@ class Main():
     def draw_image(self, img_list):
         A=Tk()
         B=Canvas(A)
-        B.place(x=0,y=0,height=100,width=100)
-        for a in range(100):
-            for b in range(100):
+        B.place(x=0,y=0,height=50,width=20)
+        for a in range(50):
+            for b in range(20):
                 B.create_line(a,b,a+1,b+1,fill=img_list[a][b])  # where pyList is a matrix of hexadecimal strings
-        A.geometry("171x207")
+        A.geometry("500x200")
         mainloop()
 
 
