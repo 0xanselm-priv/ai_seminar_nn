@@ -2,8 +2,7 @@ import numpy as np
 import math
 import sys
 import data_visualization
-
-# DEUTSCHLAND... DEUUUUUUUUTSCHLAND
+import time
 
 
 class Network:
@@ -13,7 +12,7 @@ class Network:
         self.activate_all_layers = activate_all_layers
         self.activation_function = activation_function
         self.initializer = initilizer
-        self.layer_infos = layer_infos
+        self.layer_infos = layer_infos        
         self.layer_number = len(layer_infos)
         self.weights = []
         self.bias = []
@@ -32,7 +31,7 @@ class Network:
 
         self.print_nn_info()
         
-        self.visualizer = data_visualization.DataVis()
+        self.visualizer = data_visualization.DataVis(self.layer_infos)
     
     def print_initilizer(self):
         if self.initializer == "random":
