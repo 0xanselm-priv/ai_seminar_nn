@@ -43,15 +43,11 @@ class Main():
 
     def main(self):
         dt = np.dtype("Float64")
-        wei = [np.matrix([[0.9, 0.8]], dt)]
-        #wei = [np.matrix([[0.5, .5], [0.5, 0.5], [0.5, 0.5]]), np.matrix([[0.3333, 0.3333, .3333], [0.3333, 0.33333, 0.33333]])]
-        bia = [np.matrix([[1]], dt)]
-        #bia = [np.matrix([[0.33], [0.33], [0.33]]), np.matrix([[0.5], [0.5]])]
-
 
 # ----- Flower Example 2-1 Network
 #
-# """
+#          wei = [np.matrix([[0.9, 0.8]], dt)]
+#          bia = [np.matrix([[1]], dt)]
 #          a = network_class.Network([(2), (2), (1)], weights= wei, bias=bia, activation_function="sigmoid", initilizer="xavier_sigmoid")
 #
 #         data = [[3, 1.5, 1], [2, 1, 0], [4, 1.5, 1], [3, 1, 0], [3.5, .5, 1], [2, .5, 0], [5.5, 1, 1], [1, 1, 0]]
@@ -94,7 +90,7 @@ class Main():
 #
 #         plt.plot(costs)
 #         plt.show()
-# """
+#
 
 # ----- Training a simple 1-1-1 Network
 #         x = [[0.5]]
