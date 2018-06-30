@@ -123,7 +123,7 @@ class Main():
 
 # ------ Binary 4-Digits --> ODD/EVEN
 
-        b = network_class.Network([(4), (3), (1)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_sigmoid")
+        b = network_class.Network([(4), (3), (1)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_relu")
 
         data_b = []
 
