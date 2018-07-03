@@ -7,7 +7,7 @@ import data_visualization
 
 class Network:
 
-    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random", activate_all_layers = True):
+    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random", activate_all_layers=True, dropout="no"):
         self.activate_all_layers = activate_all_layers
         self.activation_function = activation_function
         self.initializer = initilizer
@@ -25,6 +25,7 @@ class Network:
         self.functions_calls = 0
         self.calculations = 0
         self.operations = 0
+        self.dropout = dropout
 
         self.initializers(weights, bias)
 
@@ -108,7 +109,8 @@ class Network:
                 print("Wrong weight or bias format!")
                 print(type(bias))
                 sys.exit()
-
+        if self.dropout > 0:
+            self.apply_dropout()
 
     def print_nn_info(self):
         """This method prints information about the layer."""
@@ -125,7 +127,6 @@ class Network:
             print(layer_str, self.weights[i])
             print(bias_str, self.bias[i])        
         print("Input Size:", self.layer_infos[0], "x 1")
-
 
     def activate(self, inp):
         """Activation:
@@ -264,7 +265,6 @@ class Network:
         self.visualizer.flatten_data(self.weights, self.bias)
         return np.matrix(vector, dtype="Float64")
 
-
     def train_batch(self, inp_list, target_list):
         self.gradient_v = 0
         for i in range(len(inp_list)):
@@ -287,4 +287,18 @@ class Network:
         plt.plot(self.w1)
         plt.show()
 
-
+    def generate_dropout(self):
+        """call this function for every new batch"""
+        self.apply_dropout()
+    
+    def apply_dropout(self):
+        """Apply Dropout
+        
+        Method to apply dropout based on probability p. Remember that dropout should be applied epoch wise.
+        New batch/epoch needs new dropout function. Call self.generate_dropout()"""
+        temp = []
+        p = self.dropout
+        for i in self.weights:
+            temp.append(i * np.random.binomial(1, p, size=i.shape))
+            print(temp)
+        self.weights = temp  

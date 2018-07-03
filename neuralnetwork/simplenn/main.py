@@ -32,14 +32,13 @@ from tkinter import *
 import matplotlib.pyplot as plt
 import cv2
 
+
 class Main():
 
     def __init__(self):
         self.main()
         self.training_points = []
         self.dt = np.dtype("Float64")
-
-
 
     def main(self):
         dt = np.dtype("Float64")
@@ -168,10 +167,6 @@ class Main():
         # plt.plot(values)
         # plt.show()
 
-
-
-
-
 # ------ Image creation
 #         img_list = np.full((50, 20), '#ffffff')
 #         img_list_2 = np.full((100, 100), '#ffffff')
@@ -192,10 +187,9 @@ class Main():
 #
 #         plt.imshow(img)
 
-
 # ---- Deutschland Karte Example
 
-        c = network_class.Network([(2), (6), (2), (1)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_sigmoid")
+        c = network_class.Network([(2), (4), (2)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_relu", dropout=0.0)
 
         image_set = self.data_fetch()
 
@@ -203,61 +197,57 @@ class Main():
 
         cost = []
 
-        for i in range(50000):
+        for i in range(5000):
             ind = np.random.randint(len(training_set))
             point = training_set[ind]
-            c.test_train_single([[int(point[0])/50],[int(point[1])/50]], [[int(point[2])]])
+            c.test_train_single([[int(point[0]) / 50], [int(point[1]) / 50]], [[int(point[2])]])
             cost.append(c.cost())
-
-
+ 
         graph_x_r = []
         graph_y_r = []
-
+ 
         graph_x_b = []
         graph_y_b = []
-
+ 
         for i in range(5000):
             point = random.sample(image_set, 1)[0]
-            value = c.test([[int(point[0])/50],[int(point[1])/50]])
-
+            value = c.test([[int(point[0]) / 50], [int(point[1]) / 50]])
+ 
             if value > 0.5:
-                graph_x_b.append(int(point[0])/50)
-                graph_y_b.append(int(point[1])/50)
+                graph_x_b.append(int(point[0]) / 50)
+                graph_y_b.append(int(point[1]) / 50)
             else:
-                graph_x_r.append(int(point[0])/50)
-                graph_y_r.append(int(point[1])/50)
-
-
+                graph_x_r.append(int(point[0]) / 50)
+                graph_y_r.append(int(point[1]) / 50)
+ 
         plt.plot(graph_x_r, graph_y_r, 'ro')
         plt.plot(graph_x_b, graph_y_b, 'bo')
-
+ 
         plt.show()
-
+ 
         plt.plot(cost)
         plt.show()
-
+ 
         graph_x_r = []
         graph_y_r = []
-
+ 
         graph_x_b = []
         graph_y_b = []
-
+ 
         for i in range(5000):
             point = random.sample(image_set, 1)[0]
-
+ 
             if point[2] == "1":
-                graph_x_b.append(int(point[0])/50)
-                graph_y_b.append(int(point[1])/50)
+                graph_x_b.append(int(point[0]) / 50)
+                graph_y_b.append(int(point[1]) / 50)
             else:
-                graph_x_r.append(int(point[0])/50)
-                graph_y_r.append(int(point[1])/50)
-
-
+                graph_x_r.append(int(point[0]) / 50)
+                graph_y_r.append(int(point[1]) / 50)
+ 
         plt.plot(graph_x_r, graph_y_r, 'ro')
         plt.plot(graph_x_b, graph_y_b, 'bo')
-
+ 
         plt.show()
-
 
     def create_batch(self, x):
         target = []
@@ -267,14 +257,13 @@ class Main():
             target.append(self.create_target(i))
         return batch, target
 
-
     def create_training_samples(self):
         training_points = []
         for i in range(11):
             for j in range(11):
                 for m in range(11):
                     for n in range(11):
-                        training_points.append([[i/10], [j/10], [m/10], [n/10]])
+                        training_points.append([[i / 10], [j / 10], [m / 10], [n / 10]])
         return training_points
 
     def create_target(self, inp):
@@ -287,18 +276,18 @@ class Main():
         return (255 - 255 * greyscale_black, 255 - 255 * greyscale_black, 255 - 255 * greyscale_black)
 
     def rgb_in_hex(self_, rgb):
-         return "#%02x%02x%02x" % (int(rgb[0]), int(rgb[1]), int(rgb[2]))
+        return "#%02x%02x%02x" % (int(rgb[0]), int(rgb[1]), int(rgb[2]))
 
     def color_set(self, greyscale):
         return self.rgb_in_hex(self.greyscale_in_rgb(greyscale))
 
     def draw_image(self, img_list):
-        A=Tk()
-        B=Canvas(A)
-        B.place(x=0,y=0,height=50,width=20)
+        A = Tk()
+        B = Canvas(A)
+        B.place(x=0, y=0, height=50, width=20)
         for a in range(50):
             for b in range(20):
-                B.create_line(a,b,a+1,b+1,fill=img_list[a][b])  # where pyList is a matrix of hexadecimal strings
+                B.create_line(a, b, a + 1, b + 1, fill=img_list[a][b])  # where pyList is a matrix of hexadecimal strings
         A.geometry("500x200")
         mainloop()
 
@@ -315,9 +304,6 @@ class Main():
             a = (separated[0], separated[1], separated[2])
             list_temp.append(a)
         return list_temp
-
-
-
 
         
 if __name__ == "__main__":
