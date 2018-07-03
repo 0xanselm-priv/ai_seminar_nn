@@ -2,9 +2,7 @@ import numpy as np
 import math
 import sys
 import matplotlib.pyplot as plt
-
-
-# DEUTSCHLAND... DEUUUUUUUUTSCHLAND
+import data_visualization
 
 
 class Network:
@@ -36,7 +34,9 @@ class Network:
             self.initializers()
 
         self.print_nn_info()
-    
+
+        self.visualizer = data_visualization.DataVis(self.layer_infos)
+
     def print_initilizer(self):
         if self.initializer == "random":
             return("Random")
@@ -197,6 +197,7 @@ class Network:
                     vector.append([self.gradient_w(layer, entry, target)])
             for entry in range(len(self.bias[layer])):
                 vector.append([self.gradient_b(layer, entry)])
+        self.visualizer.flatten_data(self.weights, self.bias)
         return np.matrix(vector, dtype="Float64")
 
 
