@@ -1,6 +1,8 @@
 import numpy as np
 import math
 import sys
+import matplotlib.pyplot as plt
+
 
 # DEUTSCHLAND... DEUUUUUUUUTSCHLAND
 
@@ -22,6 +24,10 @@ class Network:
         self.gradient_v = 0
         self.iteration = 1
         self.dt = np.dtype("Float64")
+        self.w1 = []
+        self.functions_calls = 0
+        self.calculations = 0
+        self.operations = 0
 
         if self.initializer == "predefined":
             print("Setting up Network...")
@@ -211,6 +217,10 @@ class Network:
         self.update(0.05)
         self.print_nn_info()
 
+        self.w1.append(self.weights[1][0][0])
 
+    def print_w1(self):
+        plt.plot(self.w1)
+        plt.show()
 
 
