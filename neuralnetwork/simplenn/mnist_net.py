@@ -105,8 +105,8 @@ class Main():
 
         mnist_net_batch = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
-        for i in range(1):
-            sample = random.sample(range(len(self.training_images)), 75)
+        for i in range(1000):
+            sample = random.sample(range(len(self.training_images)), 60)
             images = []
             labels = []
             for m in range(len(sample)):
@@ -127,7 +127,7 @@ class Main():
 
         mnist_net_rand = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
-        for i in range(2):
+        for i in range(80000):
             ind = random.randint(0, len(self.training_images))
             x = self.training_images[ind]
             y = self.training_labels[ind]
@@ -144,7 +144,7 @@ class Main():
 
         mnist_net_single = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
-        for ind in range(2):
+        for ind in range(len(self.training_images)):
             x = self.training_images[ind]
             y = self.training_labels[ind]
             mnist_net_single.test_train_single(x, y)
