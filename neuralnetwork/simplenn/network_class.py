@@ -3,6 +3,7 @@ import math
 import sys
 import matplotlib.pyplot as plt
 import data_visualization
+import datetime
 
 
 class Network:
@@ -188,7 +189,8 @@ class Network:
         self.target = np.matrix(tar)
         self.output = self.propagate_forwards(inp)
         cost = self.cost()
-        print("\nInput: \n", np.matrix(inp), "\nTarget Output: \n", self.target, "\nOutput: \n", self.output, "\nCost: \n", cost)
+        #print("\nInput: \n", np.matrix(inp), "\nTarget Output: \n", self.target, "\nOutput: \n", self.output, "\nCost: \n", cost)
+        print("\nCost: \n", cost)
         return self.output
 
     def delta(self, layer):
@@ -270,14 +272,12 @@ class Network:
     def train_batch(self, inp_list, target_list):
         self.gradient_v = 0
         for i in range(len(inp_list)):
-            print("TESTING BACKPROP!")
             self.test_info(inp_list[i], target_list[i])
             self.gradient_v += self.gradient_vector()
         self.gradient_v = self.gradient_v / len(inp_list)
         self.update(0.05)
 
     def test_train_single(self, inp, tar):
-        print("TESTING BACKPROP!")
         self.test_info(inp, tar)
         self.gradient_v = self.gradient_vector()
         self.update(0.05)
@@ -299,7 +299,9 @@ class Network:
         self.weights = temp
 
     def save_params(self, title):
-        with open(title, 'a') as f:
+        time_stamp = str(datetime.datetime.now()).replace(' ', '_')[:-7]
+        title = title + time_stamp + '.txt'
+        with open(title, 'w') as f:
             f.write(str(self.layer_infos) + '\n')
             for weight in self.weights:
                 f.write(str(weight.tolist()) + '\n')

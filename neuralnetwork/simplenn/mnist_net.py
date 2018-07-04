@@ -31,27 +31,40 @@ import random
 import matplotlib.pyplot as plt
 from tensorflow.examples.tutorials.mnist import input_data
 import skimage.measure
+import time
+import datetime
 
 
 class Main():
     def __init__(self):
+        self.time_stamp = str(datetime.datetime.now()).replace(' ', '_')[:-7]
         self.main()
+
 
     def main(self):
         mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
-        training_images = mnist.train.images
-        training_labels = mnist.train.labels
+        training_images = []
+        training_labels = []
+
+# ----- MAX POOLING OF IMAGES (2,2) ------
+        for img in mnist.train.images:
+            training_images.append(np.matrix(skimage.measure.block_reduce(np.matrix(img).reshape((28,28)), (2,2), np.max)).flatten().transpose())
+
+        for lab in mnist.train.labels:
+            training_labels.append(np.matrix(lab).transpose())
+
 
 
 # ----- SHOW IMAGES OF NUMBERS ------
-        # test1 = np.array(mnist.train.images[986]).reshape((28,28))
-        # test1_down = skimage.measure.block_reduce(test1, (2,2), np.max)
-        #
-        # img = plt.imshow(test1)
-        # plt.show()
-        # img = plt.imshow(test1_down)
-        # plt.show()
+        test1 = np.array(mnist.train.images[986]).reshape((28,28))
+        test1_down = training_images[986].reshape(14, 14)
+
+        print(training_labels[986])
+        img = plt.imshow(test1)
+        plt.show()
+        img = plt.imshow(test1_down)
+        plt.show()
 
 
 
@@ -59,18 +72,24 @@ class Main():
 
 
     #----- Training all Training Points once in given order. ------------
+        start = time.time()
+
         mnist_net_single = network_class.Network([(196), (150), (10)],  weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
-        for ind in range(10):
-            x = np.matrix(training_images[ind]).reshape((28,28))
-            x = np.matrix(skimage.measure.block_reduce(x, (2,2), np.max)).flatten().transpose()
-            y = np.matrix(training_labels[ind]).transpose()
+        for ind in range(2):
+            x = training_images[ind]
+            y = training_labels[ind]
             mnist_net_single.test_train_single(x, y)
 
-        mnist_net_single.save_params('weights_after_test_1.txt')
+        mnist_net_single.save_params('weights_after_test_1')
+
+        end = time.time()
+        self.write_time(start, end)
 
 
-    # ----- Training 1000 Batches á 75 Pictures ------------
+    # ----- Training 1000 Batches a 75 Pictures ------------
+        start = time.time()
+
         mnist_net_batch = network_class.Network([(196), (150), (10)],  weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
         for i in range(1):
@@ -78,25 +97,34 @@ class Main():
             images = []
             labels = []
             for m in range(len(sample)):
-                x = np.matrix(training_images[sample[m]]).reshape((28,28))
-                images.append(np.matrix(skimage.measure.block_reduce(x, (2,2), np.max)).flatten().transpose())
-                labels.append(np.matrix(training_labels[sample[m]]).transpose())
+                x = training_images[sample[m]]
+                y = training_labels[sample[m]]
+                images.append(x)
+                labels.append(y)
             mnist_net_batch.train_batch(images, labels)
 
-        mnist_net_batch.save_params('weigths_after_test_2.txt')
+        mnist_net_batch.save_params('weigths_after_test_2')
+
+        end = time.time()
+        self.write_time(start, end)
 
 
     # ----- Training with 90000 random points ------------
+        start = time.time()
+
         mnist_net_rand = network_class.Network([(196), (150), (10)],  weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
-        for i in range(10):
+        for i in range(2):
             ind = random.randint(0, len(training_images))
-            x = np.matrix(training_images[ind]).reshape((28,28))
-            x = np.matrix(skimage.measure.block_reduce(x, (2,2), np.max)).flatten().transpose()
-            y = np.matrix(training_labels[ind]).transpose()
+            x = training_images[ind]
+            y = training_labels[ind]
             mnist_net_rand.test_train_single(x, y)
 
-        mnist_net_rand.save_params('weigths_after_test_3.txt')
+        mnist_net_rand.save_params('weigths_after_test_3')
+
+        end = time.time()
+        self.write_time(start, end)
+
 
 
     def read_params(self, file_name):
@@ -111,6 +139,11 @@ class Main():
                 bia.append(np.matrix(eval(str(rows[i + len(layer_infos)]))))
 
             return (layer_infos, wei, bia)
+
+    def write_time(self, start, end):
+        title = 'times_for_mnist_net_' + self.time_stamp + '.txt'
+        with open(title, 'a') as f:
+            f.write('Time Differrence: ' + str(end - start) + '\n')
 
 
 if __name__ == "__main__":
