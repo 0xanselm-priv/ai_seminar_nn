@@ -76,10 +76,13 @@ class Main():
 
         mnist_net_single = network_class.Network([(196), (150), (10)],  weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
+        start1 = time.time()
         for ind in range(2):
             x = training_images[ind]
             y = training_labels[ind]
             mnist_net_single.test_train_single(x, y)
+        end1 = time.time()
+        self.write_time(end1 - start1)
 
         mnist_net_single.save_params('weights_after_test_1')
 

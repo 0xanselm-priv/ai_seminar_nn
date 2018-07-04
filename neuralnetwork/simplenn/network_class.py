@@ -162,8 +162,6 @@ class Network:
         """
         self.activation = [np.matrix(inp)]
 
-        print(self.activation[0])
-
         for layer in range(self.layer_number - 2):
             self.activation.append((self.activate(self.weights[layer] * self.activation[-1] + self.bias[layer])))
 
