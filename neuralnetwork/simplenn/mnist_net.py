@@ -88,9 +88,9 @@ class Main():
 
 
     # ------ START THREADS HERE --------------------
-        t1 = threading.Thread(target=training_single())
-        t2 = threading.Thread(target=training_batch())
-        t3 = threading.Thread(target=training_rand())
+        t1 = threading.Thread(target=self.training_single())
+        t2 = threading.Thread(target=self.training_batch())
+        t3 = threading.Thread(target=self.training_rand())
 
         t1.start()
         t2.start()
