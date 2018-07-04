@@ -7,7 +7,7 @@ import data_visualization
 
 class Network:
 
-    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random", activate_all_layers=True, dropout="no"):
+    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random", activate_all_layers=True, dropout=0.0):
         self.activate_all_layers = activate_all_layers
         self.activation_function = activation_function
         self.initializer = initilizer
@@ -31,7 +31,7 @@ class Network:
 
         self.print_nn_info()
 
-        self.visualizer = data_visualization.DataVis(self.layer_infos)
+        # self.visualizer = data_visualization.DataVis(self.layer_infos) --- not needed at the moment
 
     def print_initilizer(self):
         """Prints the chosen initialization method."""
@@ -264,9 +264,7 @@ class Network:
                     vector.append([self.gradient_w(layer, entry, target)])
             for entry in range(len(self.bias[layer])):
                 vector.append([self.gradient_b(layer, entry)])
-        self.visualizer.flatten_data(self.weights, self.bias)
-        print(type(vector), len(vector))
-        print(np.matrix(vector).shape)
+        #self.visualizer.flatten_data(self.weights, self.bias) -- not needed right now
         return np.matrix(vector, dtype="Float64")
 
     def train_batch(self, inp_list, target_list):
@@ -283,13 +281,6 @@ class Network:
         self.test_info(inp, tar)
         self.gradient_v = self.gradient_vector()
         self.update(0.05)
-        self.print_nn_info()
-
-        self.w1.append(self.weights[1][0][0])
-
-    def print_w1(self):
-        plt.plot(self.w1)
-        plt.show()
 
     def generate_dropout(self):
         """call this function for every new batch"""
@@ -305,4 +296,12 @@ class Network:
         for i in self.weights:
             temp.append(i * np.random.binomial(1, p, size=i.shape))
             print(temp)
-        self.weights = temp  
+        self.weights = temp
+
+    def save_params(self, title):
+        with open(title, 'a') as f:
+            f.write(str(self.layer_infos) + '\n')
+            for weight in self.weights:
+                f.write(str(weight.tolist()) + '\n')
+            for bias in self.bias:
+                f.write(str(bias.tolist()) + '\n')

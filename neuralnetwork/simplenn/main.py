@@ -44,6 +44,7 @@ class Main():
     def main(self):
         dt = np.dtype("Float64")
 
+
 # ----- Flower Example 2-1 Network
 #
 #          wei = [np.matrix([[0.9, 0.8]], dt)]
@@ -121,52 +122,55 @@ class Main():
         # a.test_info(im, self.create_target(im))
         # a.test_info(aus, self.create_target(aus))
 
-# ------ Binary 4-Digits --> ODD/EVEN
+# #------ Binary 4-Digits --> ODD/EVEN
+#
+#         b = network_class.Network([(4), (3), (1)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_sigmoid")
+#
+#         data_b = []
+#
+#         for first in range(2):
+#             for second in range(2):
+#                 for third in range(2):
+#                     for fourth in range(2):
+#                         data_b.append([[first],[second],[third],[fourth]])
+#
+#         print(len(data_b))
+#
+#         x = random.sample(data_b, 8)  # <--- Take only a small amount of numbers train with these. 8 of 16 is very good!
+#         costs_b = []
+#
+#         # # Training in Batch
+#         # for i in range(1000):
+#         #     tar = []
+#         #     y = random.sample(data_b, 4)
+#         #     for num in y:
+#         #         tar.append([eval("0b" + str(num[0][0]) + str(num[1][0]) + str(num[2][0]) + str(num[3][0])) % 2])
+#         #     b.train_batch(y, tar)
+#
+#         # TRAINING-SINGLE
+#
+#         # for i in range(5000):
+#         #     ind = np.random.randint(len(x))
+#         #     point = x[ind]
+#         #     b.test_train_single(point, [eval("0b" + str(point[0][0]) + str(point[1][0]) + str(point[2][0]) + str(point[3][0])) % 2])
+#         #     costs_b.append(b.cost())
+#         # b.print_w1()
+#
+#         values = []
+#
+#         params = self.read_params('test.txt')
+#
+#         test = network_class.Network(params[0], weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined")
+#
+#         for data in data_b:
+#             values.append(test.test(data).item(0))
+#
+#         plt.plot(costs_b)
+#         plt.show()
+#
+#         plt.plot(values)
+#         plt.show()
 
-        # b = network_class.Network([(4), (3), (1)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_sigmoid")
-        #
-        # data_b = []
-        #
-        # for first in range(2):
-        #     for second in range(2):
-        #         for third in range(2):
-        #             for fourth in range(2):
-        #                 data_b.append([[first],[second],[third],[fourth]])
-        #
-        # print(len(data_b))
-        #
-        # x = random.sample(data_b, 8)  # <--- Take only a small amount of numbers train with these. 8 of 16 is very good!
-        # costs_b = []
-        #
-        # # # Training in Batch
-        # # for i in range(1000):
-        # #     tar = []
-        # #     y = random.sample(data_b, 4)
-        # #     for num in y:
-        # #         tar.append([eval("0b" + str(num[0][0]) + str(num[1][0]) + str(num[2][0]) + str(num[3][0])) % 2])
-        # #     b.train_batch(y, tar)
-        #
-        # # TRAINING-SINGLE
-        #
-        # for i in range(50000):
-        #     ind = np.random.randint(len(x))
-        #     point = x[ind]
-        #     b.test_train_single(point, [eval("0b" + str(point[0][0]) + str(point[1][0]) + str(point[2][0]) + str(point[3][0])) % 2])
-        #     costs_b.append(b.cost())
-        # b.print_w1()
-        #
-        # values = []
-        #
-        # for data in data_b:
-        #     values.append(b.test(data).item(0))
-        #
-        # print(x)
-        #
-        # plt.plot(costs_b)
-        # plt.show()
-        #
-        # plt.plot(values)
-        # plt.show()
 
 # ------ Image creation
 #         img_list = np.full((50, 20), '#ffffff')
@@ -189,66 +193,66 @@ class Main():
 #         plt.imshow(img)
 
 # ---- Deutschland Karte Example
-
-        c = network_class.Network([(2), (4), (2)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_relu", dropout=0.0)
-
-        image_set = self.data_fetch()
-
-        training_set = random.sample(image_set, 30000)
-
-        cost = []
-
-        for i in range(5000):
-            ind = np.random.randint(len(training_set))
-            point = training_set[ind]
-            c.test_train_single([[int(point[0]) / 50], [int(point[1]) / 50]], [[int(point[2])]])
-            cost.append(c.cost())
- 
-        graph_x_r = []
-        graph_y_r = []
- 
-        graph_x_b = []
-        graph_y_b = []
- 
-        for i in range(5000):
-            point = random.sample(image_set, 1)[0]
-            value = c.test([[int(point[0]) / 50], [int(point[1]) / 50]])
- 
-            if value > 0.5:
-                graph_x_b.append(int(point[0]) / 50)
-                graph_y_b.append(int(point[1]) / 50)
-            else:
-                graph_x_r.append(int(point[0]) / 50)
-                graph_y_r.append(int(point[1]) / 50)
- 
-        plt.plot(graph_x_r, graph_y_r, 'ro')
-        plt.plot(graph_x_b, graph_y_b, 'bo')
- 
-        plt.show()
- 
-        plt.plot(cost)
-        plt.show()
- 
-        graph_x_r = []
-        graph_y_r = []
- 
-        graph_x_b = []
-        graph_y_b = []
- 
-        for i in range(5000):
-            point = random.sample(image_set, 1)[0]
- 
-            if point[2] == "1":
-                graph_x_b.append(int(point[0]) / 50)
-                graph_y_b.append(int(point[1]) / 50)
-            else:
-                graph_x_r.append(int(point[0]) / 50)
-                graph_y_r.append(int(point[1]) / 50)
- 
-        plt.plot(graph_x_r, graph_y_r, 'ro')
-        plt.plot(graph_x_b, graph_y_b, 'bo')
- 
-        plt.show()
+#
+#         c = network_class.Network([(2), (4), (2)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_relu", dropout=0.0)
+#
+#         image_set = self.data_fetch()
+#
+#         training_set = random.sample(image_set, 30000)
+#
+#         cost = []
+#
+#         for i in range(5000):
+#             ind = np.random.randint(len(training_set))
+#             point = training_set[ind]
+#             c.test_train_single([[int(point[0]) / 50], [int(point[1]) / 50]], [[int(point[2])]])
+#             cost.append(c.cost())
+#
+#         graph_x_r = []
+#         graph_y_r = []
+#
+#         graph_x_b = []
+#         graph_y_b = []
+#
+#         for i in range(5000):
+#             point = random.sample(image_set, 1)[0]
+#             value = c.test([[int(point[0]) / 50], [int(point[1]) / 50]])
+#
+#             if value > 0.5:
+#                 graph_x_b.append(int(point[0]) / 50)
+#                 graph_y_b.append(int(point[1]) / 50)
+#             else:
+#                 graph_x_r.append(int(point[0]) / 50)
+#                 graph_y_r.append(int(point[1]) / 50)
+#
+#         plt.plot(graph_x_r, graph_y_r, 'ro')
+#         plt.plot(graph_x_b, graph_y_b, 'bo')
+#
+#         plt.show()
+#
+#         plt.plot(cost)
+#         plt.show()
+#
+#         graph_x_r = []
+#         graph_y_r = []
+#
+#         graph_x_b = []
+#         graph_y_b = []
+#
+#         for i in range(5000):
+#             point = random.sample(image_set, 1)[0]
+#
+#             if point[2] == "1":
+#                 graph_x_b.append(int(point[0]) / 50)
+#                 graph_y_b.append(int(point[1]) / 50)
+#             else:
+#                 graph_x_r.append(int(point[0]) / 50)
+#                 graph_y_r.append(int(point[1]) / 50)
+#
+#         plt.plot(graph_x_r, graph_y_r, 'ro')
+#         plt.plot(graph_x_b, graph_y_b, 'bo')
+#
+#         plt.show()
 
     def create_batch(self, x):
         target = []
@@ -305,6 +309,21 @@ class Main():
             a = (separated[0], separated[1], separated[2])
             list_temp.append(a)
         return list_temp
+
+    def read_params(self, file_name):
+        with open(file_name, 'r') as params:
+            rows = params.read().split('\n')
+            layer_infos = eval(rows[0])
+            wei = []
+            bia = []
+            for i in range(len(layer_infos) - 1):
+                wei.append(np.matrix(eval(str(rows[i + 1]))))
+            for i in range(len(layer_infos) - 1):
+                bia.append(np.matrix(eval(str(rows[i + len(layer_infos)]))))
+
+            return (layer_infos, wei, bia)
+
+
 
         
 if __name__ == "__main__":
