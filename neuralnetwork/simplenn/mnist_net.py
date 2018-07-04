@@ -48,7 +48,6 @@ class Main():
     def main(self):
         mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
-#
 
 # ----- MAX POOLING OF IMAGES (2,2) ------
         for img in mnist.train.images:
@@ -56,8 +55,6 @@ class Main():
 
         for lab in mnist.train.labels:
             self.training_labels.append(np.matrix(lab).transpose())
-
-
 
 # ----- SHOW IMAGES OF NUMBERS ------
         def show_images():
@@ -70,22 +67,8 @@ class Main():
             img = plt.imshow(test1_down)
             plt.show()
 
-
-
-
         self.params = self.read_params('start_weights_for_test.txt')
 
-
-
-
-    # ------ START THREADS HERE --------------------
-        t1 = threading.Thread(target=self.training_single())
-        t2 = threading.Thread(target=self.training_batch())
-        t3 = threading.Thread(target=self.training_rand())
-
-        t1.start()
-        t2.start()
-        t3.start()
 
 
 
@@ -163,8 +146,18 @@ class Main():
         end = time.time()
         self.write_time(start, end, start_time)
 
+    def run(self):
+        t1 = threading.Thread(target=self.training_single)
+        t2 = threading.Thread(target=self.training_batch)
+        t3 = threading.Thread(target=self.training_rand)
+
+        t1.start()
+        t2.start()
+        t3.start()
+
 
 
 
 if __name__ == "__main__":
-    Main()
+    m = Main()
+    m.run()
