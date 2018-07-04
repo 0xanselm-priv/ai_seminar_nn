@@ -48,7 +48,7 @@ class Main():
     def main(self):
         mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
-
+#
 
 # ----- MAX POOLING OF IMAGES (2,2) ------
         for img in mnist.train.images:
