@@ -67,7 +67,7 @@ class Main():
             plt.show()
             img = plt.imshow(test1_down)
             plt.show()
-        show_images()
+
 
 
 
@@ -77,6 +77,7 @@ class Main():
     #----- Training all Training Points once in given order. ------------
         def training_single():
             start = time.time()
+            start_time = datetime.datetime.now()
 
             mnist_net_single = network_class.Network([(196), (150), (10)],  weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
@@ -91,12 +92,13 @@ class Main():
             mnist_net_single.save_params('weights_after_test_1')
 
             end = time.time()
-            self.write_time(start, end)
+            self.write_time(start, end, start_time)
 
 
     # ----- Training 1000 Batches a 75 Pictures ------------
         def training_batch():
             start = time.time()
+            start_time = datetime.datetime.now()
 
             mnist_net_batch = network_class.Network([(196), (150), (10)],  weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
@@ -114,12 +116,13 @@ class Main():
             mnist_net_batch.save_params('weigths_after_test_2')
 
             end = time.time()
-            self.write_time(start, end)
+            self.write_time(start, end, start_time)
 
 
     # ----- Training with 90000 random points ------------
         def training_rand():
             start = time.time()
+            start_time = datetime.datetime.now()
 
             mnist_net_rand = network_class.Network([(196), (150), (10)],  weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
@@ -132,7 +135,7 @@ class Main():
             mnist_net_rand.save_params('weigths_after_test_3')
 
             end = time.time()
-            self.write_time(start, end)
+            self.write_time(start, end, start_time)
 
     # ------ START THREADS HERE --------------------
         t1 = threading.Thread(target=training_single())
@@ -158,10 +161,11 @@ class Main():
 
             return (layer_infos, wei, bia)
 
-    def write_time(self, start, end):
+    def write_time(self, start, end, start_time):
         title = 'times_for_mnist_net_' + self.time_stamp + '.txt'
         with open(title, 'a') as f:
             f.write('Time Differrence: ' + str(end - start) + '\n')
+            f.write('TIME of Start' + str(start_time).replace(' ', '_').replace(':', '')[:-7])
 
 
 if __name__ == "__main__":
