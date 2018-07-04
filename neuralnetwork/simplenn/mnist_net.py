@@ -82,7 +82,7 @@ class Main():
             y = training_labels[ind]
             mnist_net_single.test_train_single(x, y)
         end1 = time.time()
-        self.write_time(end1 - start1)
+        self.write_time(start1, end1)
 
         mnist_net_single.save_params('weights_after_test_1')
 
