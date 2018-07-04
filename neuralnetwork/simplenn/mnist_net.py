@@ -56,16 +56,16 @@ class Main():
         for lab in mnist.train.labels:
             self.training_labels.append(np.matrix(lab).transpose())
 
-# ----- SHOW IMAGES OF NUMBERS ------
-
-        test1 = np.array(mnist.train.images[986]).reshape((28,28))
-        test1_down = self.training_images[986].reshape(14, 14)
-
-        print(self.training_labels[986])
-        img = plt.imshow(test1)
-        plt.show()
-        img = plt.imshow(test1_down)
-        plt.show()
+# # ----- SHOW IMAGES OF NUMBERS ------
+#
+#         test1 = np.array(mnist.train.images[986]).reshape((28,28))
+#         test1_down = self.training_images[986].reshape(14, 14)
+#
+#         print(self.training_labels[986])
+#         img = plt.imshow(test1)
+#         plt.show()
+#         img = plt.imshow(test1_down)
+#         plt.show()
 
         self.params = self.read_params('start_weights_for_test.txt')
 
