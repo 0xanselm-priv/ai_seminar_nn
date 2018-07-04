@@ -37,7 +37,7 @@ import datetime
 
 class Main():
     def __init__(self):
-        self.time_stamp = str(datetime.datetime.now()).replace(' ', '_')[:-7]
+        self.time_stamp = str(datetime.datetime.now()).replace(' ', '_').replace(':', '')[:-7]
         self.main()
 
 
