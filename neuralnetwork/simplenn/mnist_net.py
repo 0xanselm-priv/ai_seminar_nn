@@ -73,18 +73,9 @@ class Main():
 
 
 
-        params = self.read_params('start_weights_for_test.txt')
+        self.params = self.read_params('start_weights_for_test.txt')
 
 
-    #----- Training all Training Points once in given order. ------------
-
-
-
-    # ----- Training 1000 Batches a 75 Pictures ------------
-
-
-
-    # ----- Training with 90000 random points ------------
 
 
     # ------ START THREADS HERE --------------------
