@@ -57,18 +57,26 @@ class Main():
             self.training_labels.append(np.matrix(lab).transpose())
 
 # ----- SHOW IMAGES OF NUMBERS ------
-        def show_images():
-            test1 = np.array(mnist.train.images[986]).reshape((28,28))
-            test1_down = self.training_images[986].reshape(14, 14)
 
-            print(self.training_labels[986])
-            img = plt.imshow(test1)
-            plt.show()
-            img = plt.imshow(test1_down)
-            plt.show()
+        test1 = np.array(mnist.train.images[986]).reshape((28,28))
+        test1_down = self.training_images[986].reshape(14, 14)
+
+        print(self.training_labels[986])
+        img = plt.imshow(test1)
+        plt.show()
+        img = plt.imshow(test1_down)
+        plt.show()
 
         self.params = self.read_params('start_weights_for_test.txt')
 
+# ------ Starting Threads ----------
+        t1 = threading.Thread(target=self.training_single)
+        t2 = threading.Thread(target=self.training_batch)
+        t3 = threading.Thread(target=self.training_rand)
+
+        t1.start()
+        t2.start()
+        t3.start()
 
 
 
@@ -92,7 +100,7 @@ class Main():
             f.write('TIME of Start' + str(start_time).replace(' ', '_').replace(':', '')[:-7] + '\n')
 
     def training_batch(self):
-            start = time.time()
+            start1 = time.time()
             start_time = datetime.datetime.now()
 
             mnist_net_batch = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
@@ -110,11 +118,11 @@ class Main():
 
             mnist_net_batch.save_params('weigths_after_test_2')
 
-            end = time.time()
-            self.write_time(start, end, start_time)
+            end1 = time.time()
+            self.write_time(start1, end1, start_time)
 
     def training_rand(self):
-            start = time.time()
+            start2 = time.time()
             start_time = datetime.datetime.now()
 
             mnist_net_rand = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
@@ -127,11 +135,11 @@ class Main():
 
             mnist_net_rand.save_params('weigths_after_test_3')
 
-            end = time.time()
-            self.write_time(start, end, start_time)
+            end2 = time.time()
+            self.write_time(start2, end2, start_time)
 
     def training_single(self):
-        start = time.time()
+        start3 = time.time()
         start_time = datetime.datetime.now()
 
         mnist_net_single = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
@@ -143,21 +151,11 @@ class Main():
 
         mnist_net_single.save_params('weights_after_test_1')
 
-        end = time.time()
-        self.write_time(start, end, start_time)
-
-    def run(self):
-        t1 = threading.Thread(target=self.training_single)
-        t2 = threading.Thread(target=self.training_batch)
-        t3 = threading.Thread(target=self.training_rand)
-
-        t1.start()
-        t2.start()
-        t3.start()
+        end3 = time.time()
+        self.write_time(start3, end3, start_time)
 
 
 
 
 if __name__ == "__main__":
-    m = Main()
-    m.run()
+    Main()
