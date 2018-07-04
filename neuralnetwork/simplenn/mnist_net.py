@@ -100,46 +100,46 @@ class Main():
             f.write('TIME of Start' + str(start_time).replace(' ', '_').replace(':', '')[:-7] + '\n')
 
     def training_batch(self):
-            start1 = time.time()
-            start_time = datetime.datetime.now()
+        start1 = datetime.datetime.now()
+        start_time = datetime.datetime.now()
 
-            mnist_net_batch = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
+        mnist_net_batch = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
-            for i in range(1):
-                sample = random.sample(range(len(self.training_images)), 75)
-                images = []
-                labels = []
-                for m in range(len(sample)):
-                    x = self.training_images[sample[m]]
-                    y = self.training_labels[sample[m]]
-                    images.append(x)
-                    labels.append(y)
-                mnist_net_batch.train_batch(images, labels)
+        for i in range(1):
+            sample = random.sample(range(len(self.training_images)), 75)
+            images = []
+            labels = []
+            for m in range(len(sample)):
+                x = self.training_images[sample[m]]
+                y = self.training_labels[sample[m]]
+                images.append(x)
+                labels.append(y)
+            mnist_net_batch.train_batch(images, labels)
 
-            mnist_net_batch.save_params('weigths_after_test_2')
+        mnist_net_batch.save_params('weigths_after_test_2')
 
-            end1 = time.time()
-            self.write_time(start1, end1, start_time)
+        end1 = datetime.datetime.now()
+        self.write_time(start1, end1, start_time)
 
     def training_rand(self):
-            start2 = time.time()
-            start_time = datetime.datetime.now()
+        start2 = time.time()
+        start_time = datetime.datetime.now()
 
-            mnist_net_rand = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
+        mnist_net_rand = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
-            for i in range(2):
-                ind = random.randint(0, len(self.training_images))
-                x = self.training_images[ind]
-                y = self.training_labels[ind]
-                mnist_net_rand.test_train_single(x, y)
+        for i in range(2):
+            ind = random.randint(0, len(self.training_images))
+            x = self.training_images[ind]
+            y = self.training_labels[ind]
+            mnist_net_rand.test_train_single(x, y)
 
-            mnist_net_rand.save_params('weigths_after_test_3')
+        mnist_net_rand.save_params('weigths_after_test_3')
 
-            end2 = time.time()
-            self.write_time(start2, end2, start_time)
+        end2 = time.time()
+        self.write_time(start2, end2, start_time)
 
     def training_single(self):
-        start3 = time.time()
+        start3 = datetime.datetime.now()
         start_time = datetime.datetime.now()
 
         mnist_net_single = network_class.Network([(196), (150), (10)],  weights=self.params[1], bias=self.params[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
@@ -151,7 +151,7 @@ class Main():
 
         mnist_net_single.save_params('weights_after_test_1')
 
-        end3 = time.time()
+        end3 = datetime.datetime.now()
         self.write_time(start3, end3, start_time)
 
 
