@@ -28,10 +28,14 @@ __email__ = ""
 import numpy as np
 import network_class
 import random
-from tkinter import *
 import matplotlib.pyplot as plt
-import cv2
+import time
 from tensorflow.examples.tutorials.mnist import input_data
+import skimage.measure
+
+
+
+
 
 
 
@@ -41,15 +45,41 @@ class Main():
     training_images = mnist.train.images
     training_labels = mnist.train.labels
 
-    mnist_net = network_class.Network([(784), (400), (10)],  weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_sigmoid", dropout=0.0)
+    test1 = np.array(mnist.train.images[986])
+    test1 = test1.reshape((28,28))
+    test1_down = skimage.measure.block_reduce(test1, (2,2), np.max)
+    test1_down22 = skimage.measure.block_reduce(test1_down, (3,3), np.max)
+    test1_down3 = skimage.measure.block_reduce(test1, (3,3), np.max)
+    test1_down4 = skimage.measure.block_reduce(test1, (4,4), np.max)
+    img = plt.imshow(test1)
+    plt.show()
+    img = plt.imshow(test1_down)
+    plt.show()
+    img = plt.imshow(test1_down3)
+    plt.show()
+    img = plt.imshow(test1_down4)
+    plt.show()
+    img = plt.imshow(test1_down22)
+    plt.show()
+
+
+
+    mnist_net = network_class.Network([(196), (150), (10)],  weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_sigmoid", dropout=0.0)
 
     # Take random and put back
 
     for ind in range(len(training_images)):
-        print("------------------------------------------------------------",ind)
-        x = np.matrix(training_images[ind]).transpose()
+        start = time.time()
+
+        print("------------------------------------------------------------", ind)
+        x = np.matrix(training_images[ind]).reshape((28,28))
+        x = np.matrix(skimage.measure.block_reduce(x, (2,2), np.max)).flatten().transpose()
         y = np.matrix(training_labels[ind]).transpose()
         mnist_net.test_train_single(x, y)
+
+        end = time.time()
+
+        print(end-start)
 
     test_7 = np.array(mnist.test.images[0]).transpose()
     test_cl = np.array(mnist.test.images[1]).transpose()
