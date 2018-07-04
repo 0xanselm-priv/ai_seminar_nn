@@ -299,8 +299,8 @@ class Network:
         self.weights = temp
 
     def save_params(self, title):
-        time_stamp = str(datetime.datetime.now()).replace(' ', '_')[:-7]
-        title = title + time_stamp + '.txt'
+        time_stamp = str(datetime.datetime.now()).replace(' ', '_').replace(':', '')[:-7]
+        title = title + '_' + time_stamp + '.txt'
         with open(title, 'w') as f:
             f.write(str(self.layer_infos) + '\n')
             for weight in self.weights:
