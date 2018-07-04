@@ -161,6 +161,8 @@ class Network:
         """
         self.activation = [np.matrix(inp)]
 
+        print(self.activation[0])
+
         for layer in range(self.layer_number - 2):
             self.activation.append((self.activate(self.weights[layer] * self.activation[-1] + self.bias[layer])))
 
@@ -263,6 +265,8 @@ class Network:
             for entry in range(len(self.bias[layer])):
                 vector.append([self.gradient_b(layer, entry)])
         self.visualizer.flatten_data(self.weights, self.bias)
+        print(type(vector), len(vector))
+        print(np.matrix(vector).shape)
         return np.matrix(vector, dtype="Float64")
 
     def train_batch(self, inp_list, target_list):
