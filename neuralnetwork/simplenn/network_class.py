@@ -7,6 +7,13 @@ import datetime
 
 
 class Network:
+    """Network:
+
+    This class is a framework for all who want to use a neural-network for thejr problems.
+    It allows for many individual tweeks and options for ones own network.
+
+    For further help read the documentation.
+    """
 
     def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random", activate_all_layers=True, dropout=0.0):
         self.activate_all_layers = activate_all_layers
@@ -27,6 +34,8 @@ class Network:
         self.calculations = 0
         self.operations = 0
         self.dropout = dropout
+        self.weights_old = self.weights
+        self.dropout_matrices = []
 
         self.initializers(weights, bias)
 
@@ -251,12 +260,25 @@ class Network:
         return self.delta(layer + 1)[node]
 
     def update(self, eta):
-        """"""
+        """Update weights:
+
+        This method updates the parameters of the network with the gradient vector
+        and the eta by updating the weights and the bias of each layer.
+        :parameter
+            eta:: float, which defines the step size with which the weights should be updated with
+        """
         for layer in range(self.layer_number - 1):
             self.update_w(eta, layer)
             self.update_b(eta, layer)
 
-    def gradient_vector(self):  # not perfect
+    def gradient_vector(self):
+        """Gradient Vector:
+
+        This Functions creates the gradient vector, which points in the direction, going
+        downhill the most. Through this vector we are trying to reach a good local minimum.
+        :return
+            np-matrix with size nx1 (data-type of entries: float64)
+        """
         vector = []
         for layer in range(self.layer_number - 1):
             for entry in range(self.weights[layer].shape[0]):
@@ -267,18 +289,37 @@ class Network:
         #self.visualizer.flatten_data(self.weights, self.bias) -- not needed right now
         return np.matrix(vector, dtype="Float64")
 
-    def train_batch(self, inp_list, target_list):
+    def train_batch(self, inp_list, target_list, eta=0.05):
+        """Batch Training:
+
+        This methods trains the network with a batch of inputs. It does this by calculating
+        the gradient vector for every image in the batch and taking the mean of them all.
+        Then it updates the parameters with this mean-gradient-vector.
+        :parameter
+            inp_list:: list of inputs as np.matrix()
+            target_list:: list of targets as np.matrix()
+            eta:: float, which defines the step size with which the weights should be updated with
+        """
         self.gradient_v = 0
         for i in range(len(inp_list)):
             self.test_info(inp_list[i], target_list[i])
             self.gradient_v += self.gradient_vector()
         self.gradient_v = self.gradient_v / len(inp_list)
-        self.update(0.05)
+        self.update(eta)
 
-    def test_train_single(self, inp, tar):
+    def test_train_single(self, inp, tar, eta=0.05):
+        """Training with single point:
+
+        This method trains the network with one given input vector. It then updates
+        the weights according to a certain eta (step size).
+        :parameter
+            inp:: input vector, with which we will train -- np.matrix()
+            tar:: target vector, resembling the target output from the net -- np.matrix()
+            eta:: float, which defines the step size with which the weights should be updated with
+        """
         self.test_info(inp, tar)
         self.gradient_v = self.gradient_vector()
-        self.update(0.05)
+        self.update(eta)
 
     def generate_dropout(self):
         """call this function for every new batch"""
@@ -289,14 +330,33 @@ class Network:
         
         Method to apply dropout based on probability p. Remember that dropout should be applied epoch wise.
         New batch/epoch needs new dropout function. Call self.generate_dropout()"""
-        temp = []
-        p = self.dropout
-        for i in self.weights:
-            temp.append(i * np.random.binomial(1, p, size=i.shape))
-            print(temp)
-        self.weights = temp
+        self.weights_old = self.weights
+        self.dropout_matrices = []
+
+        p = 1 - self.dropout
+
+        for i in range(len(self.weights)):
+            self.dropout_matrices.append( np.random.binomial(1, p, size=self.weights[i].shape))
+            self.weights[i] = self.weights[i] * self.dropout_matrices[i]
+
+
+
+
+    def reasign_weights(self):
+        weights_after_backprop = self.weights
+        self.weights = []
+        for weight_num in range(len(weights_after_backprop)):
+            y = weights_after_backprop[weight_num] * self.dropout_matrices[weight_num] + self.weights_old * self.dropout_matrices[weight_num].inverse()
+            self.weights.append(y)
 
     def save_params(self, title):
+        """Save network:
+
+        This method saves the parameters of a network, to then later use a
+        pretrained network, by using the read_params function.
+        :parameter
+            title:: this is a part of the title for the text-document, in which we will save the params
+        """
         time_stamp = str(datetime.datetime.now()).replace(' ', '_').replace(':', '')[:-7]
         title = title + '_' + time_stamp + '.txt'
         with open(title, 'w') as f:
