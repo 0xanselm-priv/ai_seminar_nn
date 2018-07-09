@@ -337,7 +337,7 @@ class Network:
 
         for i in range(len(self.weights)):
             self.dropout_matrices.append( np.random.binomial(1, p, size=self.weights[i].shape))
-            self.weights[i] = self.weights[i] * self.dropout_matrices[i]
+            self.weights[i] = np.multiply(self.weights[i], self.dropout_matrices[i])
 
 
 
@@ -346,7 +346,8 @@ class Network:
         weights_after_backprop = self.weights
         self.weights = []
         for weight_num in range(len(weights_after_backprop)):
-            y = weights_after_backprop[weight_num] * self.dropout_matrices[weight_num] + self.weights_old * self.dropout_matrices[weight_num].inverse()
+            y = np.multiply(weights_after_backprop[weight_num], self.dropout_matrices[weight_num]) + \
+                np.multiply(self.weights_old, self.dropout_matrices[weight_num].inverse())
             self.weights.append(y)
 
     def save_params(self, title):
