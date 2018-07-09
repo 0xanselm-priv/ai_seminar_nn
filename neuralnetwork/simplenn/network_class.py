@@ -339,9 +339,6 @@ class Network:
             self.dropout_matrices.append( np.random.binomial(1, p, size=self.weights[i].shape))
             self.weights[i] = np.multiply(self.weights[i], self.dropout_matrices[i])
 
-
-
-
     def reasign_weights(self):
         weights_after_backprop = self.weights
         self.weights = []
