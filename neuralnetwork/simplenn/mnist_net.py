@@ -70,14 +70,31 @@ class Main():
         self.params = self.read_params('start_weights_for_test.txt')
 
 # ------ Starting Threads ----------
-        t1 = threading.Thread(target=self.training_single)
-        t2 = threading.Thread(target=self.training_batch)
-        t3 = threading.Thread(target=self.training_rand)
+#         t1 = threading.Thread(target=self.training_single)
+#         t2 = threading.Thread(target=self.training_batch)
+#         t3 = threading.Thread(target=self.training_rand)
+#
+#         t1.start()
+#         t2.start()
+#         t3.start()
 
-        t1.start()
-        t2.start()
-        t3.start()
+        test_images = []
+        test_labels = []
 
+        parameters = self.read_params('weigths_after_test_2_2018-07-06_030533.txt')
+
+        for img in mnist.test.images:
+            test_images.append(np.matrix(skimage.measure.block_reduce(np.matrix(img).reshape((28,28)), (2,2), np.max)).flatten().transpose())
+
+        for lab in mnist.test.labels:
+            test_labels.append(np.matrix(lab).transpose())
+
+
+        mnist_net = network_class.Network([(196), (150), (10)],  weights=parameters[1], bias=parameters[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
+
+        for i in range(10):
+            print(np.argmax(mnist_net.test(test_images[i])))
+            print(test_labels[i])
 
 
     def read_params(self, file_name):
