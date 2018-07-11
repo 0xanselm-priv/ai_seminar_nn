@@ -91,7 +91,7 @@ class Main():
         acc1 = []
         acc2 = []
 
-        for ind in range(4):
+        for ind in range(55000):
             ind = random.randint(0, 55000)
             percentage = percentage + 1 / 55000
             if ind % 800 == 0:

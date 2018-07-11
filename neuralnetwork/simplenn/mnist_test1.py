@@ -91,7 +91,7 @@ class Main():
         acc1 = []
         acc2 = []
 
-        for ind in range(4):
+        for ind in range(len(self.training_images)):
             percentage = percentage + 1 / len(self.training_images)
             if ind % 800 == 0:
                 error1 = 0
