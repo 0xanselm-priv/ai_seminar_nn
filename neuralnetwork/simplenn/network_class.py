@@ -70,7 +70,7 @@ class Network:
         You can choose the following methods: (random, seed, xavier_sigmoid, xavier_relu, xavier_bengio,
         xavier_tf, predefined). Please look at the Documentation of TF for overview on all methods.
 
-        Parameters:
+        :parameter
             weights:: if predefined is the chosen method, this parameter holds the predefined weights
             bias:: if predefined is the chosen method, this parameter holds the predefined bias
         """
@@ -96,11 +96,11 @@ class Network:
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         elif self.initializer == "xavier_bengio":
             for layer_num in range(self.layer_number - 1):
-                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(2 / self.layer_number + self.layer_number + 1))
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(2 / self.layer_infos[layer_num] + self.layer_infos[layer_num + 1]))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         elif self.initializer == "xavier_tf":
             for layer_num in range(self.layer_number - 1):
-                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(6 / self.layer_number + self.layer_number + 1))
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(6 / self.layer_infos[layer_num] + self.layer_infos[layer_num + 1]))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         elif self.initializer == "predefined":
             if type(weights) == list and type(bias) == list and len(weights) == self.layer_number - 1:  # if weights are matrices
@@ -119,8 +119,6 @@ class Network:
                 print("Wrong weight or bias format!")
                 print(type(bias))
                 sys.exit()
-        if self.dropout > 0:
-            self.apply_dropout()
 
     def print_nn_info(self):
         """This method prints information about the layer."""
@@ -129,20 +127,23 @@ class Network:
         print("Initializer used:", self.print_initilizer())
         for layer_num in range(self.layer_number):
             print("Layer", str(layer_num), "with", self.layer_infos[layer_num], "nodes")
-
-        for i in range(len(self.bias)):
-            layer_str = "Weight Matrix. Layer " + \
-                str(i) + " -> " + str(i + 1) + " Matrix " + "\n"
-            bias_str = "Layer " + str(i + 1) + " Bias Vector." + "\n"
-            print(layer_str, self.weights[i])
-            print(bias_str, self.bias[i])        
-        print("Input Size:", self.layer_infos[0], "x 1")
+        try:
+            for i in range(len(self.bias)):
+                layer_str = "Weight Matrix. Layer " + \
+                    str(i) + " -> " + str(i + 1) + " Matrix " + "\n"
+                bias_str = "Layer " + str(i + 1) + " Bias Vector." + "\n"
+                print(layer_str, self.weights[i])
+                print(bias_str, self.bias[i])
+            print("Input Size:", self.layer_infos[0], "x 1")
+        except IndexError:
+            print("\n\n\nWRONG Weights or Bias importet!")
+            sys.exit()
 
     def activate(self, inp):
         """Activation:
 
         This functions applies the chosen activation-function on a given input.
-        Parameters:
+        :parameter
             inp:: this is the input, on which the function should be applied on,
              it can be any nx1 dimensional vector.
         """
@@ -152,10 +153,32 @@ class Network:
             for entry in inp:
                 new.append([(1 / (1 + math.exp(-entry.item(0))))])
             return np.matrix(new)
-        elif self.activate_function == "relu":
-            # TO DO
-            print("Not yet implemented")
-            sys.exit()
+        elif self.activation_function == "relu":
+            new = []
+            for entry in inp:
+                if entry <= 0:
+                    new.append([0])
+                else:
+                    new.append([entry.item(0)])
+            return np.matrix(new)
+        elif self.activation_function == "step":
+            new = []
+            for entry in inp:
+                if entry <= 0:
+                    new.append([0])
+                else:
+                    new.append([1])
+            return np.matrix(new)
+        elif self.activation_function == "tanh":
+            new = []
+            for entry in inp:
+                new.append([(2 / (1 + math.exp(-2 * entry.item(0))) - 1)])
+            return np.matrix(new)
+        elif self.activation_function == "linear":
+            new = []
+            for entry in inp:
+                new.append([(2 / (1 + math.exp(-2 * entry.item(0))) - 1)])
+            return np.matrix(new)
 
     def propagate_forwards(self, inp):
         """Propagation
@@ -164,15 +187,17 @@ class Network:
         It safes the output of each layer in the activation list.
         If activate_all_layers is set to true, every layer is being pumped through the activation-
         function, otherwise this is not done for the last layer.
-        Parameters:
+        :parameter
             inp:: this is the input, which should be propageted forward through the network,
                 it should be a nx1 dimensional vector
         Return: The function returns the output from the last layer as a vector.
         """
+        self.generate_dropout()
         self.activation = [np.matrix(inp)]
 
         for layer in range(self.layer_number - 2):
-            self.activation.append((self.activate(self.weights[layer] * self.activation[-1] + self.bias[layer])))
+            self.activation.append((self.activate(self.weights[layer]
+                                                  * self.activation[-1] + self.bias[layer])))
 
         if self.activate_all_layers:
             output = self.activate(self.weights[-1] * self.activation[-1] + self.bias[-1])
@@ -196,26 +221,56 @@ class Network:
         self.target = np.matrix(tar)
         self.output = self.propagate_forwards(inp)
         cost = self.cost()
-        #print("\nInput: \n", np.matrix(inp), "\nTarget Output: \n", self.target, "\nOutput: \n", self.output, "\nCost: \n", cost)
+        #print("\nInput: \n", np.matrix(inp), "\nTarget Output: \n",
+        # self.target, "\nOutput: \n", self.output, "\nCost: \n", cost)
         print("\nCost: \n", cost)
         return self.output
 
     def delta(self, layer):
         """This function calculates the delta of a certain layer, used for the gradient vector."""
-        if layer == self.layer_number - 1:
-            if self.activate_all_layers:
-                return np.multiply(np.multiply(self.activation[-1], (1 - self.activation[-1])), (self.target - self.output))  # self.output == self.activation[-1]
+        if self.activation_function == "sigmoid":
+            if layer == self.layer_number - 1:
+                if self.activate_all_layers:
+                    return np.multiply(np.multiply(self.activation[-1], (1 - self.activation[-1])),
+                                       (self.target - self.output))
+                else:
+                    return self.target - self.output
             else:
-                return self.target - self.output
-        else:
-            return np.multiply(np.multiply(self.activation[layer], (1 - self.activation[layer])), np.transpose(self.weights[layer]) * self.delta(layer + 1))
+                return np.multiply(np.multiply(self.activation[layer], (1 - self.activation[layer])),
+                                   np.transpose(self.weights[layer]) * self.delta(layer + 1))
+        elif self.activation_function == "relu":
+            if layer == self.layer_number - 1:
+                if self.activate_all_layers:
+                    return np.multiply(self.derivative(self.weights[layer - 1] * self.activation[layer - 1] + self.bias[layer - 1]),
+                                       (self.target - self.output))
+                else:
+                    return self.target - self.output
+            else:
+                return np.multiply(self.derivative(self.weights[layer - 1] * self.activation[layer - 1] + self.bias[layer - 1]),
+                                   np.transpose(self.weights[layer]) * self.delta(layer + 1))
+
+
+
+    def derivative(self, inp):
+        if self.activation_function == "sigmoid":
+            return np.multiply(self.activate(inp), (1 - self.activate(inp)))
+        elif self.activation_function == "relu":
+            new = []
+            for entry in inp:
+                if np.maximum(0, entry) == 0:
+                    new.append([0])
+                else:
+                    new.append([1])
+            return np.matrix(new)
+
+
 
     def update_b(self, eta, layer):
         """Update Bias:
 
         This method updates the bias of a certain layer,
         by adding the corresponding gradient multiplied by a learning rate (eta), to the old value.
-        Parameters:
+        :parameter
             eta:: float, resembling the learning rate
             layer:: int, number of the layer in which the bias should be updatet
         """
@@ -228,21 +283,22 @@ class Network:
 
          This method updates the weights of a certain layer,
          by adding the corresponding gradient multiplied by a learning rate (eta), to the old value.
-         Parameters:
+         :parameter
             eta:: float, resembling the learning rate
             layer:: int, number of the layer in which the bias should be updatet
         """
 
         for entry in range(self.weights[layer].shape[0]):
             for target in range(self.weights[layer].shape[1]):
-                self.weights[layer].itemset((entry, target), self.weights[layer].item(entry, target) + eta * self.gradient_v.item(0))
+                self.weights[layer].itemset((entry, target), self.weights[layer].item(entry, target)
+                                            + eta * self.gradient_v.item(0))
                 self.gradient_v = np.delete(self.gradient_v, 0, 0)
 
     def gradient_w(self, layer, to, fro):
         """Gradient of certain weight.
 
         This function calculates the gradient of a certain weight, by using the delta and an activation
-        Parameters:
+        :parameter
             layer:: int, layer number to calculate
             to:: int, node-number, to which the weight is connected
             fro:: int, node-number, from which the weight comes
@@ -253,7 +309,7 @@ class Network:
         """Gradient of certain bias.
 
         This function calculates the gradient of a certain bias, by using the delta-function.
-        Parameters:
+        :parameter
             layer:: int, layer number to calculate
             node:: int, node-number, to which the bias is added
         """
@@ -263,13 +319,16 @@ class Network:
         """Update weights:
 
         This method updates the parameters of the network with the gradient vector
-        and the eta by updating the weights and the bias of each layer.
+        and the eta by updating the weights and the bias of each layer. After this the weights which
+        have been dropped out will be reactivated for the next step.
         :parameter
             eta:: float, which defines the step size with which the weights should be updated with
         """
         for layer in range(self.layer_number - 1):
             self.update_w(eta, layer)
             self.update_b(eta, layer)
+
+        self.reassign_weights()
 
     def gradient_vector(self):
         """Gradient Vector:
@@ -336,15 +395,33 @@ class Network:
         p = 1 - self.dropout
 
         for i in range(len(self.weights)):
-            self.dropout_matrices.append( np.random.binomial(1, p, size=self.weights[i].shape))
+            # create a matrix which drops out single units of the network
+            self.dropout_matrices.append(np.resize(np.random.binomial(1, p, size=(1, self.weights[i].shape[1])), self.weights[i].shape))
             self.weights[i] = np.multiply(self.weights[i], self.dropout_matrices[i])
 
-    def reasign_weights(self):
+    def reassign_weights(self):
+        """Reassign weights after backprop:
+
+        This method sets the waits correctly after dropout and backprop."""
         weights_after_backprop = self.weights
         self.weights = []
+
+        inverse_matrices = []
+        for matrix in self.dropout_matrices:
+            mat_new = []
+            for row in matrix:
+                row_new = []
+                for element in row:
+                    if element == 0:
+                        row_new.append(1)
+                    else:
+                        row_new.append(0)
+                mat_new.append(row_new)
+            inverse_matrices.append(np.matrix(mat_new))
+
         for weight_num in range(len(weights_after_backprop)):
             y = np.multiply(weights_after_backprop[weight_num], self.dropout_matrices[weight_num]) + \
-                np.multiply(self.weights_old, self.dropout_matrices[weight_num].inverse())
+                np.multiply(self.weights_old[weight_num], inverse_matrices[weight_num])
             self.weights.append(y)
 
     def save_params(self, title):

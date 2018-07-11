@@ -92,9 +92,31 @@ class Main():
 
         mnist_net = network_class.Network([(196), (150), (10)],  weights=parameters[1], bias=parameters[2], activation_function="sigmoid", initilizer="predefined", dropout=0.0)
 
-        for i in range(10):
-            print(np.argmax(mnist_net.test(test_images[i])))
-            print(test_labels[i])
+
+        error1 = 0
+        error2 = 0
+        for i in range(10000):
+            x = mnist_net.test(test_images[i])
+            first = np.argmax(x)
+            seccond = np.argmax(np.delete(x, first))
+            if seccond >= first:
+                seccond += 1
+            y = np.argmax(test_labels[i])
+
+            if first != y:
+                error1 += 1
+                if seccond != y:
+                    error2 += 1
+                    print("Error")
+                    print(x)
+                    print(first, seccond)
+                    print(y)
+                    img = plt.imshow(test_images[i].reshape(14, 14))
+                    plt.show()
+
+
+        print(error1/10000)
+        print(error2/10000)
 
 
     def read_params(self, file_name):

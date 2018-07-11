@@ -124,52 +124,52 @@ class Main():
 
 # #------ Binary 4-Digits --> ODD/EVEN
 #
-#         b = network_class.Network([(4), (3), (1)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_sigmoid")
-#
-#         data_b = []
-#
-#         for first in range(2):
-#             for second in range(2):
-#                 for third in range(2):
-#                     for fourth in range(2):
-#                         data_b.append([[first],[second],[third],[fourth]])
-#
-#         print(len(data_b))
-#
-#         x = random.sample(data_b, 8)  # <--- Take only a small amount of numbers train with these. 8 of 16 is very good!
-#         costs_b = []
-#
-#         # # Training in Batch
-#         # for i in range(1000):
-#         #     tar = []
-#         #     y = random.sample(data_b, 4)
-#         #     for num in y:
-#         #         tar.append([eval("0b" + str(num[0][0]) + str(num[1][0]) + str(num[2][0]) + str(num[3][0])) % 2])
-#         #     b.train_batch(y, tar)
-#
-#         # TRAINING-SINGLE
-#
-#         # for i in range(5000):
-#         #     ind = np.random.randint(len(x))
-#         #     point = x[ind]
-#         #     b.test_train_single(point, [eval("0b" + str(point[0][0]) + str(point[1][0]) + str(point[2][0]) + str(point[3][0])) % 2])
-#         #     costs_b.append(b.cost())
-#         # b.print_w1()
-#
-#         values = []
-#
-#         params = self.read_params('test.txt')
-#
-#         test = network_class.Network(params[0], weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined")
-#
-#         for data in data_b:
-#             values.append(test.test(data).item(0))
-#
-#         plt.plot(costs_b)
-#         plt.show()
-#
-#         plt.plot(values)
-#         plt.show()
+        b = network_class.Network([(4), (3), (1)], weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_relu", dropout=0.0)
+
+        data_b = []
+
+        for first in range(2):
+            for second in range(2):
+                for third in range(2):
+                    for fourth in range(2):
+                        data_b.append([[first],[second],[third],[fourth]])
+
+        print(len(data_b))
+
+        x = random.sample(data_b, 14)  # <--- Take only a small amount of numbers train with these. 8 of 16 is very good!
+        costs_b = []
+
+        # # Training in Batch
+        # for i in range(5000):
+        #     tar = []
+        #     y = random.sample(data_b, 4)
+        #     for num in y:
+        #         tar.append([eval("0b" + str(num[0][0]) + str(num[1][0]) + str(num[2][0]) + str(num[3][0])) % 2])
+        #     b.train_batch(y, tar)
+        #     costs_b.append(b.cost())
+
+        # # TRAINING-SINGLE
+
+        for i in range(10000):
+            ind = np.random.randint(len(x))
+            point = x[ind]
+            b.test_train_single(point, [eval("0b" + str(point[0][0]) + str(point[1][0]) + str(point[2][0]) + str(point[3][0])) % 2])
+            costs_b.append(b.cost())
+        #
+        values = []
+
+        #params = self.read_params('test.txt')
+
+        #test = network_class.Network(params[0], weights=params[1], bias=params[2], activation_function="sigmoid", initilizer="predefined")
+
+        for data in data_b:
+            values.append(b.test(data).item(0))
+
+        plt.plot(costs_b)
+        plt.show()
+
+        plt.plot(values)
+        plt.show()
 
 
 # ------ Image creation
