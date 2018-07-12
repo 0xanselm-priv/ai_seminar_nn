@@ -92,7 +92,7 @@ class Main():
         acc2 = []
 
         for ind in range(10000):
-            ind = random.randint(0, 55000)
+            ind = random.randint(0, 54999)
             percentage = percentage + 1 / 10000
             if ind % 250 == 0:
                 error1 = 0
