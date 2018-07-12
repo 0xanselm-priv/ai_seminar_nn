@@ -14,10 +14,10 @@ class Network:
     For further help read the documentation.
     """
 
-    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random", activate_all_layers=True, dropout=0.0):
+    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initializer="random", activate_all_layers=True, dropout=0.0):
         self.activate_all_layers = activate_all_layers
         self.activation_function = activation_function
-        self.initializer = initilizer
+        self.initializer = initializer
         self.layer_infos = layer_infos
         self.layer_number = len(layer_infos)
         self.weights = []
