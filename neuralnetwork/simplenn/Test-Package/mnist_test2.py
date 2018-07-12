@@ -91,7 +91,7 @@ class Main():
         acc1 = []
         acc2 = []
 
-        for ind in range(55000):
+        for w in range(55000):
             ind = random.randint(0, 54999)
             percentage = percentage + 1 / 55000
             if ind % 800 == 0:
@@ -117,7 +117,7 @@ class Main():
             y = self.training_labels[ind]
             mnist_net_single.test_train_single(x, y)
 
-            print('\n' + str(percentage) + '%\n')
+            print('\n' + str(round(percentage * 100, 5)) + '%\n')
 
         mnist_net_single.save_params('weights_after_test_2')
 
