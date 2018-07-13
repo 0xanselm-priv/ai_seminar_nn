@@ -86,7 +86,7 @@ class Main():
         start3 = datetime.datetime.now()
         start_time = datetime.datetime.now()
 
-        mnist_net_single = network_class.Network([(196), (100), (10)],  weights=None, bias=None, activation_function="sigmoid", initilizer="xavier_relu", dropout=0.0)
+        mnist_net_single = network_class.Network([(196), (100), (10)],  weights=None, bias=None, activation_function="sigmoid", initializer="xavier_relu", dropout=0.0)
 
         acc1 = []
         acc2 = []
