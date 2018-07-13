@@ -91,10 +91,10 @@ class Main():
         acc1 = []
         acc2 = []
 
-        for ind in range(10000):
+        for w in range(10000):
             ind = random.randint(0, 55000)
             percentage = percentage + 1 / 10000
-            if ind % 250 == 0:
+            if w % 250 == 0:
                 error1 = 0
                 error2 = 0
                 for i in range(10000):

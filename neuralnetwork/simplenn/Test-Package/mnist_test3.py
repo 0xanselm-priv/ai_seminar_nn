@@ -94,7 +94,7 @@ class Main():
         for w in range(55000):
             ind = random.randint(0, 54999)
             percentage = percentage + 1 / 55000
-            if ind % 800 == 0:
+            if w % 800 == 0:
                 error1 = 0
                 error2 = 0
                 for i in range(10000):
