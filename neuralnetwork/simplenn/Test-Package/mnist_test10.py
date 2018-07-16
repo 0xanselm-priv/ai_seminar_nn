@@ -36,7 +36,7 @@ import datetime
 import threading
 
 
-# ------------------------- Train a 196-100-10 Network with 10000 Images with Initialization Xavier_tf! --------------
+# ------------------------- Train a 196-100-10 Network with 10000 Images with Initialization Xavier_Bengio! --------------
 
 
 class Main():
@@ -86,7 +86,7 @@ class Main():
         start3 = datetime.datetime.now()
         start_time = datetime.datetime.now()
 
-        mnist_net_single = network_class.Network([(196), (100), (10)],  weights=None, bias=None, activation_function="sigmoid", initializer="xavier_tf", dropout=0.0)
+        mnist_net_single = network_class.Network([(196), (100), (10)],  weights=None, bias=None, activation_function="sigmoid", initializer="xavier_bengio", dropout=0.0)
 
         acc1 = []
         acc2 = []

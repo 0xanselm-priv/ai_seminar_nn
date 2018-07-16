@@ -2,7 +2,6 @@ import numpy as np
 import math
 import sys
 import matplotlib.pyplot as plt
-import data_visualization
 import datetime
 
 
@@ -15,10 +14,10 @@ class Network:
     For further help read the documentation.
     """
 
-    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initilizer="random", activate_all_layers=True, dropout=0.0):
+    def __init__(self, layer_infos, activation_function="sigmoid", weights=[], bias=[], initializer="random", activate_all_layers=True, dropout=0.0):
         self.activate_all_layers = activate_all_layers
         self.activation_function = activation_function
-        self.initializer = initilizer
+        self.initializer = initializer
         self.layer_infos = layer_infos
         self.layer_number = len(layer_infos)
         self.weights = []
@@ -62,7 +61,7 @@ class Network:
         else:
             print("Wrong Initializer")
             sys.exit()
-    
+
     def initializers(self, weights, bias):
         """Initializer:
 
@@ -75,11 +74,11 @@ class Network:
             bias:: if predefined is the chosen method, this parameter holds the predefined bias
         """
         i = 1
-        if self.initializer == "random":            
+        if self.initializer == "random":
             for layer_num in range(self.layer_number - 1):
                 self.weights.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]))))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
-        elif self.initializer == "seed":            
+        elif self.initializer == "seed":
             for layer_num in range(self.layer_number - 1):
                 seed = 5 * i
                 np.random.seed(seed)
@@ -96,11 +95,11 @@ class Network:
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         elif self.initializer == "xavier_bengio":
             for layer_num in range(self.layer_number - 1):
-                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(2 / self.layer_infos[layer_num] + self.layer_infos[layer_num + 1]))
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(2 / (self.layer_infos[layer_num] + self.layer_infos[layer_num + 1])))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         elif self.initializer == "xavier_tf":
             for layer_num in range(self.layer_number - 1):
-                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(6 / self.layer_infos[layer_num] + self.layer_infos[layer_num + 1]))
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(6 / (self.layer_infos[layer_num] + self.layer_infos[layer_num + 1])))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         elif self.initializer == "predefined":
             if type(weights) == list and type(bias) == list and len(weights) == self.layer_number - 1:  # if weights are matrices

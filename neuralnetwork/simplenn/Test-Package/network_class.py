@@ -95,11 +95,11 @@ class Network:
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         elif self.initializer == "xavier_bengio":
             for layer_num in range(self.layer_number - 1):
-                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(2 / self.layer_infos[layer_num] + self.layer_infos[layer_num + 1]))
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(2 / (self.layer_infos[layer_num] + self.layer_infos[layer_num + 1])))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         elif self.initializer == "xavier_tf":
             for layer_num in range(self.layer_number - 1):
-                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(6 / self.layer_infos[layer_num] + self.layer_infos[layer_num + 1]))
+                self.weights.append(np.random.randn(self.layer_infos[layer_num + 1], self.layer_infos[layer_num]) * np.sqrt(6 / (self.layer_infos[layer_num] + self.layer_infos[layer_num + 1])))
                 self.bias.append(np.matrix(np.random.randint(5, size=(self.layer_infos[layer_num + 1], 1))))
         elif self.initializer == "predefined":
             if type(weights) == list and type(bias) == list and len(weights) == self.layer_number - 1:  # if weights are matrices
