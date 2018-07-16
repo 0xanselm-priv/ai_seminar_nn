@@ -117,7 +117,7 @@ class Main():
             y = self.training_labels[ind]
             mnist_net_single.test_train_single(x, y)
 
-            print('\n' + str(percentage) + '%\n')
+            print('\n' + str(percentage * 100) + '%\n')
 
         mnist_net_single.save_params('weights_after_test_8')
 
